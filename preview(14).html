@@ -1,0 +1,1167 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>World Mega Dictionary</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
+header{text-align:center;padding:30px 15px;background:linear-gradient(135deg,#6335c9,#087eaa)}
+header h1{font-size:32px;margin:0 0 10px}
+header p{color:#e4eaff}
+.controls{max-width:1200px;margin:22px auto;padding:0 15px;display:flex;gap:10px;flex-wrap:wrap}
+input,select{padding:13px;border-radius:10px;border:1px solid #405477;background:#171f35;color:white;font-size:15px}
+input{flex:1;min-width:200px}
+.tabs{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:10px}
+button{cursor:pointer}
+.tabs button{padding:12px 15px;background:#202b45;border:1px solid #405477;border-radius:10px;color:white}
+.tabs button.active{background:#7655e8}
+#wordCount{text-align:center;color:#aebbd5;margin:18px}
+.grid{max-width:1200px;margin:auto;padding:0 15px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.card{background:#151e32;border:1px solid #293b59;border-radius:13px;padding:18px;min-width:0}
+.card:hover{border-color:#8066f5}
+.word{font-size:25px;font-weight:bold;overflow-wrap:anywhere}
+.meaning{color:#8ce8c2;margin:10px 0;font-size:16px}
+.meta{font-size:12px;color:#9daecc;margin:10px 0}
+.copy{width:100%;padding:10px;border:0;border-radius:8px;background:#334665;color:white}
+.copy:hover{background:#526d9b}
+.empty{text-align:center;grid-column:1/-1;padding:35px;color:#aebbd5}
+footer{text-align:center;color:#8291ad;padding:25px}
+</style>
+</head>
+<body>
+<header>
+<h1>🌍 WORLD MEGA DICTIONARY</h1>
+<p>🇹🇷 Turkish · 🇪🇸 Spanish · 🇸🇦 Arabic · 🇦🇺 Australian English · 🇫🇷 French</p>
+<p>Words, translations, expressions and numbers from 0 to 1,000</p>
+</header>
+
+<div class="controls">
+<input id="search" placeholder="Search words, meanings or numbers..." oninput="render()">
+<select id="category" onchange="render()">
+<option>All Categories</option>
+<option>Numbers</option><option>Greetings</option><option>Everyday</option>
+<option>People</option><option>Family</option><option>Food</option>
+<option>Animals</option><option>Colors</option><option>Adjectives</option>
+<option>Verbs</option><option>Gaming</option><option>Technology</option>
+<option>School</option><option>Nature</option><option>Time</option>
+<option>Places</option><option>Body</option><option>Clothing</option>
+<option>Sports</option><option>Travel</option><option>Feelings</option>
+<option>Weather</option><option>House</option><option>Questions</option>
+<option>Useful Phrases</option><option>Australian Expressions</option>
+</select>
+</div>
+
+<div class="tabs">
+<button class="active" onclick="setLang('Turkish',this)">🇹🇷 Turkish</button>
+<button onclick="setLang('Spanish',this)">🇪🇸 Spanish</button>
+<button onclick="setLang('Arabic',this)">🇸🇦 Arabic</button>
+<button onclick="setLang('Australian English',this)">🇦🇺 Australian</button>
+<button onclick="setLang('French',this)">🇫🇷 French</button>
+<button onclick="setLang('All',this)">🌍 All languages</button>
+</div>
+
+<div id="wordCount"></div>
+<div class="grid" id="grid"></div>
+<footer>World Mega Dictionary · Keep learning every day!</footer>
+
+<script>
+const flags={
+"Turkish":"🇹🇷",
+"Spanish":"🇪🇸",
+"Arabic":"🇸🇦",
+"Australian English":"🇦🇺",
+"French":"🇫🇷"
+};
+
+const data=[];
+function add(lang,cat,entries){
+ entries.forEach(([word,en])=>data.push({lang,cat,word,en}));
+}
+
+/* TURKISH */
+add("Turkish","Greetings",[
+["Merhaba","Hello"],["Selam","Hi"],["Günaydın","Good morning"],
+["İyi günler","Good day"],["İyi akşamlar","Good evening"],
+["İyi geceler","Good night"],["Hoşça kal","Goodbye"],
+["Görüşürüz","See you"],["Teşekkür ederim","Thank you"],
+["Rica ederim","You're welcome"],["Lütfen","Please"],
+["Özür dilerim","I'm sorry"],["Hoş geldin","Welcome"]
+]);
+add("Turkish","Everyday",[
+["Evet","Yes"],["Hayır","No"],["Belki","Maybe"],["Tamam","Okay"],
+["Şimdi","Now"],["Sonra","Later"],["Bugün","Today"],["Yarın","Tomorrow"],
+["Dün","Yesterday"],["Burada","Here"],["Orada","There"],["Neden","Why"],
+["Çünkü","Because"],["Ama","But"],["Ve","And"],["Veya","Or"],
+["Her zaman","Always"],["Asla","Never"],["Bazen","Sometimes"],
+["Bir şey","Something"],["Hiçbir şey","Nothing"]
+]);
+add("Turkish","People",[
+["İnsan","Human"],["Kişi","Person"],["Arkadaş","Friend"],
+["Öğretmen","Teacher"],["Öğrenci","Student"],["Doktor","Doctor"],
+["Çocuk","Child"],["Kadın","Woman"],["Erkek","Man"],["Komşu","Neighbor"]
+]);
+add("Turkish","Family",[
+["Aile","Family"],["Anne","Mother"],["Baba","Father"],
+["Kardeş","Sibling"],["Abi","Older brother"],["Abla","Older sister"],
+["Büyükanne","Grandmother"],["Büyükbaba","Grandfather"],
+["Teyze","Aunt"],["Amca","Uncle"],["Oğul","Son"],["Kız","Girl / Daughter"]
+]);
+add("Turkish","Food",[
+["Su","Water"],["Ekmek","Bread"],["Süt","Milk"],["Peynir","Cheese"],
+["Yumurta","Egg"],["Elma","Apple"],["Armut","Pear"],["Muz","Banana"],
+["Portakal","Orange"],["Çilek","Strawberry"],["Üzüm","Grapes"],
+["Karpuz","Watermelon"],["Domates","Tomato"],["Patates","Potato"],
+["Soğan","Onion"],["Havuç","Carrot"],["Tavuk","Chicken"],
+["Et","Meat"],["Pirinç","Rice"],["Çorba","Soup"],["Şeker","Sugar"],
+["Tuz","Salt"],["Kahve","Coffee"],["Çay","Tea"]
+]);
+add("Turkish","Animals",[
+["Kedi","Cat"],["Köpek","Dog"],["Kuş","Bird"],["Balık","Fish"],
+["At","Horse"],["İnek","Cow"],["Koyun","Sheep"],["Tavşan","Rabbit"],
+["Aslan","Lion"],["Kaplan","Tiger"],["Fil","Elephant"],["Ayı","Bear"],
+["Kurt","Wolf"],["Tilki","Fox"],["Yılan","Snake"],["Arı","Bee"]
+]);
+add("Turkish","Colors",[
+["Kırmızı","Red"],["Mavi","Blue"],["Yeşil","Green"],["Sarı","Yellow"],
+["Turuncu","Orange"],["Mor","Purple"],["Pembe","Pink"],
+["Siyah","Black"],["Beyaz","White"],["Gri","Gray"],["Kahverengi","Brown"]
+]);
+add("Turkish","Adjectives",[
+["Büyük","Big"],["Küçük","Small"],["Uzun","Long / Tall"],["Kısa","Short"],
+["Güzel","Beautiful"],["İyi","Good"],["Kötü","Bad"],["Yeni","New"],
+["Eski","Old"],["Hızlı","Fast"],["Yavaş","Slow"],["Kolay","Easy"],
+["Zor","Difficult"],["Güçlü","Strong"],["Zayıf","Weak"],
+["Sıcak","Hot / Warm"],["Soğuk","Cold"],["Temiz","Clean"],["Kirli","Dirty"]
+]);
+add("Turkish","Verbs",[
+["Olmak","To be"],["Yapmak","To do / Make"],["Gitmek","To go"],
+["Gelmek","To come"],["Görmek","To see"],["Bakmak","To look"],
+["Duymak","To hear"],["Dinlemek","To listen"],["Konuşmak","To speak"],
+["Söylemek","To say"],["Bilmek","To know"],["Anlamak","To understand"],
+["Öğrenmek","To learn"],["Öğretmek","To teach"],["Okumak","To read"],
+["Yazmak","To write"],["Çizmek","To draw"],["Çalışmak","To work / Study"],
+["Oynamak","To play"],["Koşmak","To run"],["Yürümek","To walk"],
+["Yemek","To eat"],["İçmek","To drink"],["Uyumak","To sleep"],
+["Sevmek","To love / Like"],["İstemek","To want"],["Almak","To take / Buy"],
+["Vermek","To give"],["Bulmak","To find"],["Kazanmak","To win"],
+["Kaybetmek","To lose"],["Düşünmek","To think"],["Unutmak","To forget"]
+]);
+add("Turkish","Gaming",[
+["Oyun","Game"],["Oyuncu","Player"],["Düşman","Enemy"],["Takım","Team"],
+["Seviye","Level"],["Görev","Mission"],["Harita","Map"],["Dünya","World"],
+["Kılıç","Sword"],["Kalkan","Shield"],["Zırh","Armor"],["Silah","Weapon"],
+["Altın","Gold"],["Elmas","Diamond"],["Taş","Stone"],["Odun","Wood"],
+["Blok","Block"],["Can","Health / Life"],["Hasar","Damage"],
+["Güç","Power"],["Hız","Speed"],["Zafer","Victory"],["Yenilgi","Defeat"],
+["Puan","Score"],["Envanter","Inventory"]
+]);
+add("Turkish","Technology",[
+["Bilgisayar","Computer"],["Telefon","Phone"],["Ekran","Screen"],
+["Klavye","Keyboard"],["Fare","Mouse"],["İnternet","Internet"],
+["Web sitesi","Website"],["Uygulama","Application"],["Dosya","File"],
+["Klasör","Folder"],["Şifre","Password"],["Hesap","Account"],
+["Program","Program"],["Kod","Code"],["Yazılım","Software"],
+["Robot","Robot"],["Yapay zeka","Artificial intelligence"]
+]);
+add("Turkish","School",[
+["Okul","School"],["Sınıf","Classroom"],["Ders","Lesson"],["Ödev","Homework"],
+["Sınav","Exam"],["Kalem","Pen"],["Defter","Notebook"],["Kitap","Book"],
+["Silgi","Eraser"],["Matematik","Mathematics"],["Fen","Science"],
+["Tarih","History"],["Coğrafya","Geography"],["Dil","Language"]
+]);
+add("Turkish","Nature",[
+["Doğa","Nature"],["Ağaç","Tree"],["Çiçek","Flower"],["Yaprak","Leaf"],
+["Orman","Forest"],["Dağ","Mountain"],["Deniz","Sea"],["Nehir","River"],
+["Göl","Lake"],["Ada","Island"],["Kum","Sand"],["Gökyüzü","Sky"],
+["Güneş","Sun"],["Ay","Moon"],["Yıldız","Star"],["Bulut","Cloud"],
+["Yağmur","Rain"],["Kar","Snow"],["Rüzgar","Wind"]
+]);
+add("Turkish","Time",[
+["Zaman","Time"],["Saat","Hour / Clock"],["Dakika","Minute"],
+["Saniye","Second"],["Gün","Day"],["Hafta","Week"],["Ay","Month / Moon"],
+["Yıl","Year"],["Sabah","Morning"],["Öğle","Noon"],["Akşam","Evening"],
+["Gece","Night"],["Pazartesi","Monday"],["Salı","Tuesday"],
+["Çarşamba","Wednesday"],["Perşembe","Thursday"],["Cuma","Friday"],
+["Cumartesi","Saturday"],["Pazar","Sunday"]
+]);
+add("Turkish","Places",[
+["Şehir","City"],["Köy","Village"],["Ülke","Country"],["Sokak","Street"],
+["Yol","Road"],["Park","Park"],["Hastane","Hospital"],["Market","Market"],
+["Mağaza","Store"],["Restoran","Restaurant"],["Kütüphane","Library"],
+["Müze","Museum"],["Havaalanı","Airport"],["Plaj","Beach"]
+]);
+add("Turkish","Body",[
+["Vücut","Body"],["Baş","Head"],["Saç","Hair"],["Yüz","Face"],
+["Göz","Eye"],["Kulak","Ear"],["Burun","Nose"],["Ağız","Mouth"],
+["Diş","Tooth"],["Boyun","Neck"],["Kol","Arm"],["El","Hand"],
+["Parmak","Finger"],["Bacak","Leg"],["Ayak","Foot"],["Kalp","Heart"]
+]);
+add("Turkish","Clothing",[
+["Kıyafet","Clothing"],["Gömlek","Shirt"],["Pantolon","Trousers"],
+["Ayakkabı","Shoes"],["Çorap","Socks"],["Ceket","Jacket"],
+["Mont","Coat"],["Şapka","Hat"],["Elbise","Dress"],["Etek","Skirt"],
+["Kazak","Sweater"],["Tişört","T-shirt"]
+]);
+add("Turkish","Sports",[
+["Spor","Sport"],["Futbol","Football / Soccer"],["Basketbol","Basketball"],
+["Voleybol","Volleyball"],["Tenis","Tennis"],["Yüzme","Swimming"],
+["Bisiklet","Bicycle"],["Top","Ball"],["Gol","Goal"],["Maç","Match"],
+["Hakem","Referee"]
+]);
+add("Turkish","Travel",[
+["Seyahat","Travel"],["Tatil","Vacation"],["Bilet","Ticket"],
+["Pasaport","Passport"],["Valiz","Suitcase"],["Otobüs","Bus"],
+["Tren","Train"],["Araba","Car"],["Uçak","Airplane"],["Gemi","Ship"],
+["Taksi","Taxi"],["Yolcu","Passenger"]
+]);
+add("Turkish","Feelings",[
+["Mutlu","Happy"],["Üzgün","Sad"],["Kızgın","Angry"],["Korkmuş","Afraid"],
+["Heyecanlı","Excited"],["Yorgun","Tired"],["Sakin","Calm"],
+["Şaşkın","Surprised"],["Umutlu","Hopeful"],["Endişeli","Worried"]
+]);
+add("Turkish","Weather",[
+["Hava","Weather / Air"],["Güneşli","Sunny"],["Yağmurlu","Rainy"],
+["Karlı","Snowy"],["Rüzgarlı","Windy"],["Bulutlu","Cloudy"],
+["Fırtına","Storm"],["Sis","Fog"],["Sıcaklık","Temperature"]
+]);
+add("Turkish","House",[
+["Ev","House / Home"],["Oda","Room"],["Mutfak","Kitchen"],
+["Banyo","Bathroom"],["Yatak","Bed"],["Masa","Table"],["Sandalye","Chair"],
+["Kapı","Door"],["Pencere","Window"],["Duvar","Wall"],["Zemin","Floor"],
+["Lamba","Lamp"],["Anahtar","Key"]
+]);
+add("Turkish","Questions",[
+["Ne?","What?"],["Kim?","Who?"],["Nerede?","Where?"],["Nereye?","Where to?"],
+["Ne zaman?","When?"],["Neden?","Why?"],["Nasıl?","How?"],
+["Kaç?","How many?"],["Ne kadar?","How much?"],["Hangisi?","Which?"]
+]);
+add("Turkish","Useful Phrases",[
+["Nasılsın?","How are you?"],["İyiyim","I'm fine"],["Adın ne?","What's your name?"],
+["Benim adım...","My name is..."],["Anlamıyorum","I don't understand"],
+["Bilmiyorum","I don't know"],["Yardım eder misin?","Can you help?"],
+["Sorun değil","No problem"],["Türkçe öğreniyorum","I'm learning Turkish"],
+["İngilizce konuşuyor musun?","Do you speak English?"],
+["Tekrar eder misin?","Can you repeat?"],["İyi şanslar","Good luck"]
+]);
+
+/* SPANISH */
+add("Spanish","Greetings",[
+["Hola","Hello"],["Buenas","Hi"],["Buenos días","Good morning"],
+["Buenas tardes","Good afternoon"],["Buenas noches","Good evening / Good night"],
+["Adiós","Goodbye"],["Hasta luego","See you later"],["Gracias","Thank you"],
+["Muchas gracias","Thank you very much"],["De nada","You're welcome"],
+["Por favor","Please"],["Lo siento","I'm sorry"],["Perdón","Excuse me"],
+["Bienvenido","Welcome"]
+]);
+add("Spanish","Everyday",[
+["Sí","Yes"],["No","No"],["Vale","Okay (Spain)"],["Quizás","Maybe"],
+["Nunca","Never"],["Siempre","Always"],["A veces","Sometimes"],
+["Ahora","Now"],["Después","Later"],["Hoy","Today"],["Ayer","Yesterday"],
+["Mañana","Tomorrow / Morning"],["Aquí","Here"],["Allí","There"],
+["Algo","Something"],["Nada","Nothing"],["Mucho","A lot"],["Poco","Little"],
+["Más","More"],["Suficiente","Enough"],["Porque","Because"],["Pero","But"],
+["Y","And"],["O","Or"]
+]);
+add("Spanish","People",[
+["Persona","Person"],["Gente","People"],["Amigo","Male friend"],
+["Amiga","Female friend"],["Profesor","Teacher"],["Estudiante","Student"],
+["Doctor","Doctor"],["Ingeniero","Engineer"],["Niño","Boy / Child"],
+["Niña","Girl / Child"],["Mujer","Woman"],["Hombre","Man"],["Vecino","Neighbor"]
+]);
+add("Spanish","Family",[
+["Familia","Family"],["Madre","Mother"],["Padre","Father"],["Mamá","Mom"],
+["Papá","Dad"],["Hermano","Brother"],["Hermana","Sister"],
+["Abuela","Grandmother"],["Abuelo","Grandfather"],["Tía","Aunt"],
+["Tío","Uncle"],["Primo","Male cousin"],["Prima","Female cousin"],
+["Hijo","Son"],["Hija","Daughter"]
+]);
+add("Spanish","Food",[
+["Agua","Water"],["Pan","Bread"],["Leche","Milk"],["Queso","Cheese"],
+["Huevo","Egg"],["Manzana","Apple"],["Pera","Pear"],["Plátano","Banana"],
+["Naranja","Orange"],["Fresa","Strawberry"],["Uva","Grape"],
+["Sandía","Watermelon"],["Limón","Lemon"],["Tomate","Tomato"],
+["Patata","Potato (Spain)"],["Papa","Potato (Latin America)"],
+["Cebolla","Onion"],["Zanahoria","Carrot"],["Pollo","Chicken"],
+["Carne","Meat"],["Pescado","Fish"],["Arroz","Rice"],["Sopa","Soup"],
+["Azúcar","Sugar"],["Sal","Salt"],["Café","Coffee"],["Té","Tea"],
+["Desayuno","Breakfast"],["Almuerzo","Lunch"],["Cena","Dinner"]
+]);
+add("Spanish","Animals",[
+["Gato","Cat"],["Perro","Dog"],["Pájaro","Bird"],["Pez","Fish"],
+["Caballo","Horse"],["Vaca","Cow"],["Oveja","Sheep"],["Conejo","Rabbit"],
+["León","Lion"],["Tigre","Tiger"],["Elefante","Elephant"],["Oso","Bear"],
+["Lobo","Wolf"],["Zorro","Fox"],["Serpiente","Snake"],["Abeja","Bee"]
+]);
+add("Spanish","Colors",[
+["Rojo","Red"],["Azul","Blue"],["Verde","Green"],["Amarillo","Yellow"],
+["Naranja","Orange"],["Morado","Purple"],["Rosa","Pink"],["Negro","Black"],
+["Blanco","White"],["Gris","Gray"],["Marrón","Brown"]
+]);
+add("Spanish","Adjectives",[
+["Grande","Big"],["Pequeño","Small"],["Largo","Long"],["Corto","Short"],
+["Bonito","Pretty"],["Feo","Ugly"],["Bueno","Good"],["Malo","Bad"],
+["Nuevo","New"],["Viejo","Old"],["Joven","Young"],["Rápido","Fast"],
+["Lento","Slow"],["Fácil","Easy"],["Difícil","Difficult"],
+["Fuerte","Strong"],["Débil","Weak"],["Caliente","Hot"],["Frío","Cold"],
+["Limpio","Clean"],["Sucio","Dirty"],["Correcto","Correct"]
+]);
+add("Spanish","Verbs",[
+["Ser","To be"],["Estar","To be"],["Hacer","To do / Make"],["Ir","To go"],
+["Venir","To come"],["Ver","To see"],["Mirar","To look"],["Oír","To hear"],
+["Escuchar","To listen"],["Hablar","To speak"],["Decir","To say"],
+["Saber","To know"],["Conocer","To know / Meet"],["Entender","To understand"],
+["Aprender","To learn"],["Enseñar","To teach"],["Leer","To read"],
+["Escribir","To write"],["Dibujar","To draw"],["Trabajar","To work"],
+["Jugar","To play"],["Correr","To run"],["Caminar","To walk"],
+["Saltar","To jump"],["Comer","To eat"],["Beber","To drink"],
+["Dormir","To sleep"],["Amar","To love"],["Querer","To want / Love"],
+["Dar","To give"],["Tomar","To take"],["Encontrar","To find"],
+["Perder","To lose"],["Ganar","To win"],["Abrir","To open"],
+["Cerrar","To close"],["Esperar","To wait / Hope"],["Pensar","To think"],
+["Recordar","To remember"],["Olvidar","To forget"],["Ayudar","To help"]
+]);
+add("Spanish","Gaming",[
+["Juego","Game"],["Jugador","Player"],["Enemigo","Enemy"],["Equipo","Team"],
+["Nivel","Level"],["Misión","Mission"],["Mapa","Map"],["Mundo","World"],
+["Espada","Sword"],["Escudo","Shield"],["Armadura","Armor"],["Arma","Weapon"],
+["Arco","Bow"],["Flecha","Arrow"],["Oro","Gold"],["Diamante","Diamond"],
+["Piedra","Stone"],["Madera","Wood"],["Bloque","Block"],["Vida","Health / Life"],
+["Daño","Damage"],["Poder","Power"],["Velocidad","Speed"],["Victoria","Victory"],
+["Derrota","Defeat"],["Puntuación","Score"],["Inventario","Inventory"],
+["Minería","Mining"]
+]);
+add("Spanish","Technology",[
+["Ordenador","Computer (Spain)"],["Computadora","Computer (Latin America)"],
+["Teléfono","Phone"],["Pantalla","Screen"],["Teclado","Keyboard"],
+["Ratón","Mouse"],["Internet","Internet"],["Sitio web","Website"],
+["Aplicación","Application"],["Archivo","File"],["Carpeta","Folder"],
+["Contraseña","Password"],["Cuenta","Account"],["Programa","Program"],
+["Código","Code"],["Software","Software"],["Robot","Robot"],
+["Inteligencia artificial","Artificial intelligence"]
+]);
+add("Spanish","School",[
+["Escuela","School"],["Clase","Class"],["Lección","Lesson"],["Tarea","Homework"],
+["Examen","Exam"],["Nota","Grade / Note"],["Bolígrafo","Pen"],["Lápiz","Pencil"],
+["Cuaderno","Notebook"],["Libro","Book"],["Goma","Eraser"],["Regla","Ruler"],
+["Matemáticas","Mathematics"],["Ciencia","Science"],["Historia","History"],
+["Geografía","Geography"],["Idioma","Language"]
+]);
+add("Spanish","Nature",[
+["Naturaleza","Nature"],["Árbol","Tree"],["Flor","Flower"],["Hoja","Leaf"],
+["Bosque","Forest"],["Montaña","Mountain"],["Mar","Sea"],["Océano","Ocean"],
+["Río","River"],["Lago","Lake"],["Isla","Island"],["Arena","Sand"],
+["Tierra","Earth / Soil"],["Cielo","Sky"],["Sol","Sun"],["Luna","Moon"],
+["Estrella","Star"],["Nube","Cloud"],["Lluvia","Rain"],["Nieve","Snow"],
+["Viento","Wind"]
+]);
+add("Spanish","Time",[
+["Tiempo","Time / Weather"],["Hora","Hour"],["Minuto","Minute"],
+["Segundo","Second"],["Día","Day"],["Semana","Week"],["Mes","Month"],
+["Año","Year"],["Mañana","Tomorrow / Morning"],["Tarde","Afternoon"],
+["Noche","Night"],["Lunes","Monday"],["Martes","Tuesday"],
+["Miércoles","Wednesday"],["Jueves","Thursday"],["Viernes","Friday"],
+["Sábado","Saturday"],["Domingo","Sunday"]
+]);
+add("Spanish","Places",[
+["Ciudad","City"],["Pueblo","Village"],["País","Country"],["Calle","Street"],
+["Carretera","Road"],["Parque","Park"],["Hospital","Hospital"],
+["Mercado","Market"],["Tienda","Store"],["Restaurante","Restaurant"],
+["Biblioteca","Library"],["Museo","Museum"],["Aeropuerto","Airport"],
+["Estación","Station"],["Playa","Beach"]
+]);
+add("Spanish","Body",[
+["Cuerpo","Body"],["Cabeza","Head"],["Pelo","Hair"],["Cara","Face"],
+["Ojo","Eye"],["Oreja","Ear"],["Nariz","Nose"],["Boca","Mouth"],
+["Diente","Tooth"],["Cuello","Neck"],["Brazo","Arm"],["Mano","Hand"],
+["Dedo","Finger"],["Pierna","Leg"],["Pie","Foot"],["Corazón","Heart"]
+]);
+add("Spanish","Clothing",[
+["Ropa","Clothing"],["Camisa","Shirt"],["Pantalones","Trousers"],
+["Zapatos","Shoes"],["Calcetines","Socks"],["Chaqueta","Jacket"],
+["Abrigo","Coat"],["Sombrero","Hat"],["Vestido","Dress"],["Falda","Skirt"],
+["Jersey","Sweater"],["Camiseta","T-shirt"]
+]);
+add("Spanish","Sports",[
+["Deporte","Sport"],["Fútbol","Football / Soccer"],["Baloncesto","Basketball"],
+["Voleibol","Volleyball"],["Tenis","Tennis"],["Natación","Swimming"],
+["Bicicleta","Bicycle"],["Pelota","Ball"],["Gol","Goal"],["Partido","Match"],
+["Árbitro","Referee"]
+]);
+add("Spanish","Travel",[
+["Viaje","Trip"],["Vacaciones","Vacation"],["Billete","Ticket"],
+["Pasaporte","Passport"],["Maleta","Suitcase"],["Autobús","Bus"],
+["Tren","Train"],["Coche","Car (Spain)"],["Carro","Car (Latin America)"],
+["Avión","Airplane"],["Barco","Ship"],["Taxi","Taxi"],["Pasajero","Passenger"]
+]);
+add("Spanish","Feelings",[
+["Feliz","Happy"],["Triste","Sad"],["Enfadado","Angry"],["Asustado","Afraid"],
+["Emocionado","Excited"],["Cansado","Tired"],["Tranquilo","Calm"],
+["Sorprendido","Surprised"],["Preocupado","Worried"]
+]);
+add("Spanish","Weather",[
+["Clima","Climate / Weather"],["Soleado","Sunny"],["Lluvioso","Rainy"],
+["Nevado","Snowy"],["Ventoso","Windy"],["Nublado","Cloudy"],
+["Tormenta","Storm"],["Niebla","Fog"],["Temperatura","Temperature"]
+]);
+add("Spanish","House",[
+["Casa","House / Home"],["Habitación","Room"],["Cocina","Kitchen"],
+["Baño","Bathroom"],["Cama","Bed"],["Mesa","Table"],["Silla","Chair"],
+["Puerta","Door"],["Ventana","Window"],["Pared","Wall"],["Suelo","Floor"],
+["Lámpara","Lamp"],["Llave","Key"]
+]);
+add("Spanish","Questions",[
+["¿Qué?","What?"],["¿Quién?","Who?"],["¿Dónde?","Where?"],
+["¿Adónde?","Where to?"],["¿Cuándo?","When?"],["¿Por qué?","Why?"],
+["¿Cómo?","How?"],["¿Cuántos?","How many?"],["¿Cuánto?","How much?"],
+["¿Cuál?","Which?"]
+]);
+add("Spanish","Useful Phrases",[
+["¿Cómo estás?","How are you?"],["Estoy bien","I'm fine"],
+["¿Cómo te llamas?","What's your name?"],["Me llamo...","My name is..."],
+["No entiendo","I don't understand"],["No sé","I don't know"],
+["¿Puedes ayudarme?","Can you help me?"],["No hay problema","No problem"],
+["Estoy aprendiendo español","I'm learning Spanish"],
+["¿Hablas inglés?","Do you speak English?"],
+["¿Puedes repetir?","Can you repeat?"],["Me gusta","I like it"],
+["Buena suerte","Good luck"],["¡Buen provecho!","Enjoy your meal"]
+]);
+
+/* ARABIC — Modern Standard Arabic vocabulary */
+add("Arabic","Greetings",[
+["مرحبا","Hello"],["أهلا","Hi / Welcome"],["السلام عليكم","Peace be upon you"],
+["وعليكم السلام","And peace be upon you"],["صباح الخير","Good morning"],
+["مساء الخير","Good evening"],["تصبح على خير","Good night"],
+["مع السلامة","Goodbye"],["شكرا","Thank you"],["شكرا جزيلا","Thank you very much"],
+["عفوا","You're welcome / Excuse me"],["من فضلك","Please"],
+["آسف","Sorry (male speaker)"],["آسفة","Sorry (female speaker)"],
+["أهلا وسهلا","Welcome"]
+]);
+add("Arabic","Everyday",[
+["نعم","Yes"],["لا","No"],["ربما","Maybe"],["حسنا","Okay"],
+["الآن","Now"],["لاحقا","Later"],["اليوم","Today"],["غدا","Tomorrow"],
+["أمس","Yesterday"],["هنا","Here"],["هناك","There"],["لماذا","Why"],
+["لأن","Because"],["لكن","But"],["و","And"],["أو","Or"],
+["دائما","Always"],["أبدا","Never"],["أحيانا","Sometimes"],
+["شيء","Thing"],["لا شيء","Nothing"],["كثير","A lot"],["قليل","Little"]
+]);
+add("Arabic","People",[
+["إنسان","Human"],["شخص","Person"],["صديق","Friend (male)"],
+["صديقة","Friend (female)"],["معلم","Teacher (male)"],["معلمة","Teacher (female)"],
+["طالب","Student (male)"],["طالبة","Student (female)"],["طبيب","Doctor"],
+["طفل","Child"],["رجل","Man"],["امرأة","Woman"],["جار","Neighbor"]
+]);
+add("Arabic","Family",[
+["عائلة","Family"],["أم","Mother"],["أب","Father"],["أمي","My mother"],
+["أبي","My father"],["أخ","Brother"],["أخت","Sister"],["جد","Grandfather"],
+["جدة","Grandmother"],["عم","Paternal uncle"],["عمة","Paternal aunt"],
+["خال","Maternal uncle"],["خالة","Maternal aunt"],["ابن","Son"],
+["ابنة","Daughter"]
+]);
+add("Arabic","Food",[
+["ماء","Water"],["خبز","Bread"],["حليب","Milk"],["جبن","Cheese"],
+["بيض","Eggs"],["تفاح","Apples"],["كمثرى","Pear"],["موز","Banana"],
+["برتقال","Orange"],["فراولة","Strawberry"],["عنب","Grapes"],
+["بطيخ","Watermelon"],["ليمون","Lemon"],["طماطم","Tomato"],
+["بطاطس","Potatoes"],["بصل","Onion"],["جزر","Carrot"],["دجاج","Chicken"],
+["لحم","Meat"],["سمك","Fish"],["أرز","Rice"],["شوربة","Soup"],
+["سكر","Sugar"],["ملح","Salt"],["قهوة","Coffee"],["شاي","Tea"],
+["فطور","Breakfast"],["غداء","Lunch"],["عشاء","Dinner"]
+]);
+add("Arabic","Animals",[
+["قطة","Cat"],["كلب","Dog"],["طائر","Bird"],["سمكة","Fish"],
+["حصان","Horse"],["بقرة","Cow"],["خروف","Sheep"],["أرنب","Rabbit"],
+["أسد","Lion"],["نمر","Tiger"],["فيل","Elephant"],["دب","Bear"],
+["ذئب","Wolf"],["ثعلب","Fox"],["ثعبان","Snake"],["نحلة","Bee"]
+]);
+add("Arabic","Colors",[
+["أحمر","Red"],["أزرق","Blue"],["أخضر","Green"],["أصفر","Yellow"],
+["برتقالي","Orange"],["بنفسجي","Purple"],["وردي","Pink"],
+["أسود","Black"],["أبيض","White"],["رمادي","Gray"],["بني","Brown"]
+]);
+add("Arabic","Adjectives",[
+["كبير","Big"],["صغير","Small"],["طويل","Long / Tall"],["قصير","Short"],
+["جميل","Beautiful"],["قبيح","Ugly"],["جيد","Good"],["سيئ","Bad"],
+["جديد","New"],["قديم","Old"],["سريع","Fast"],["بطيء","Slow"],
+["سهل","Easy"],["صعب","Difficult"],["قوي","Strong"],["ضعيف","Weak"],
+["حار","Hot"],["بارد","Cold"],["نظيف","Clean"],["متسخ","Dirty"]
+]);
+add("Arabic","Verbs",[
+["يكون","To be"],["يفعل","To do"],["يذهب","To go"],["يأتي","To come"],
+["يرى","To see"],["ينظر","To look"],["يسمع","To hear"],["يستمع","To listen"],
+["يتكلم","To speak"],["يقول","To say"],["يعرف","To know"],
+["يفهم","To understand"],["يتعلم","To learn"],["يعلم","To teach / Know"],
+["يقرأ","To read"],["يكتب","To write"],["يرسم","To draw"],
+["يعمل","To work"],["يلعب","To play"],["يجري","To run"],
+["يمشي","To walk"],["يقفز","To jump"],["يأكل","To eat"],
+["يشرب","To drink"],["ينام","To sleep"],["يحب","To love / Like"],
+["يريد","To want"],["يعطي","To give"],["يأخذ","To take"],
+["يجد","To find"],["يفوز","To win"],["يخسر","To lose"],
+["يفكر","To think"],["يساعد","To help"]
+]);
+add("Arabic","Gaming",[
+["لعبة","Game"],["لاعب","Player"],["عدو","Enemy"],["فريق","Team"],
+["مستوى","Level"],["مهمة","Mission"],["خريطة","Map"],["عالم","World"],
+["سيف","Sword"],["درع","Shield / Armor"],["سلاح","Weapon"],
+["قوس","Bow"],["سهم","Arrow"],["ذهب","Gold"],["ألماس","Diamond"],
+["حجر","Stone"],["خشب","Wood"],["كتلة","Block"],["صحة","Health"],
+["ضرر","Damage"],["قوة","Power"],["سرعة","Speed"],["نصر","Victory"],
+["هزيمة","Defeat"],["نقاط","Points"],["حقيبة","Inventory / Bag"]
+]);
+add("Arabic","Technology",[
+["حاسوب","Computer"],["هاتف","Phone"],["شاشة","Screen"],["لوحة مفاتيح","Keyboard"],
+["فأرة","Mouse"],["إنترنت","Internet"],["موقع إلكتروني","Website"],
+["تطبيق","Application"],["ملف","File"],["مجلد","Folder"],["كلمة المرور","Password"],
+["حساب","Account"],["برنامج","Program"],["رمز برمجي","Code"],
+["برمجيات","Software"],["روبوت","Robot"],["ذكاء اصطناعي","Artificial intelligence"]
+]);
+add("Arabic","School",[
+["مدرسة","School"],["صف","Classroom"],["درس","Lesson"],["واجب","Homework"],
+["امتحان","Exam"],["علامة","Grade / Mark"],["قلم","Pen"],["قلم رصاص","Pencil"],
+["دفتر","Notebook"],["كتاب","Book"],["ممحاة","Eraser"],["مسطرة","Ruler"],
+["رياضيات","Mathematics"],["علوم","Science"],["تاريخ","History"],
+["جغرافيا","Geography"],["لغة","Language"]
+]);
+add("Arabic","Nature",[
+["طبيعة","Nature"],["شجرة","Tree"],["زهرة","Flower"],["ورقة","Leaf / Paper"],
+["غابة","Forest"],["جبل","Mountain"],["بحر","Sea"],["محيط","Ocean"],
+["نهر","River"],["بحيرة","Lake"],["جزيرة","Island"],["رمل","Sand"],
+["أرض","Earth / Land"],["سماء","Sky"],["شمس","Sun"],["قمر","Moon"],
+["نجمة","Star"],["سحابة","Cloud"],["مطر","Rain"],["ثلج","Snow"],
+["ريح","Wind"]
+]);
+add("Arabic","Time",[
+["وقت","Time"],["ساعة","Hour / Clock"],["دقيقة","Minute"],["ثانية","Second"],
+["يوم","Day"],["أسبوع","Week"],["شهر","Month"],["سنة","Year"],
+["صباح","Morning"],["ظهر","Noon"],["مساء","Evening"],["ليل","Night"],
+["الاثنين","Monday"],["الثلاثاء","Tuesday"],["الأربعاء","Wednesday"],
+["الخميس","Thursday"],["الجمعة","Friday"],["السبت","Saturday"],["الأحد","Sunday"]
+]);
+add("Arabic","Places",[
+["مدينة","City"],["قرية","Village"],["بلد","Country / Town"],["شارع","Street"],
+["طريق","Road"],["حديقة","Park / Garden"],["مستشفى","Hospital"],
+["سوق","Market"],["متجر","Store"],["مطعم","Restaurant"],
+["مكتبة","Library / Bookshop"],["متحف","Museum"],["مطار","Airport"],
+["محطة","Station"],["شاطئ","Beach"]
+]);
+add("Arabic","Body",[
+["جسم","Body"],["رأس","Head"],["شعر","Hair"],["وجه","Face"],
+["عين","Eye"],["أذن","Ear"],["أنف","Nose"],["فم","Mouth"],
+["سن","Tooth"],["رقبة","Neck"],["ذراع","Arm"],["يد","Hand"],
+["إصبع","Finger"],["ساق","Leg"],["قدم","Foot"],["قلب","Heart"]
+]);
+add("Arabic","Clothing",[
+["ملابس","Clothes"],["قميص","Shirt"],["بنطال","Trousers"],["حذاء","Shoe"],
+["جوارب","Socks"],["سترة","Jacket"],["معطف","Coat"],["قبعة","Hat"],
+["فستان","Dress"],["تنورة","Skirt"],["كنزة","Sweater"]
+]);
+add("Arabic","Sports",[
+["رياضة","Sport"],["كرة القدم","Football / Soccer"],["كرة السلة","Basketball"],
+["كرة الطائرة","Volleyball"],["تنس","Tennis"],["سباحة","Swimming"],
+["دراجة","Bicycle"],["كرة","Ball"],["هدف","Goal"],["مباراة","Match"],
+["حكم","Referee"]
+]);
+add("Arabic","Travel",[
+["سفر","Travel"],["عطلة","Vacation"],["تذكرة","Ticket"],["جواز سفر","Passport"],
+["حقيبة سفر","Suitcase"],["حافلة","Bus"],["قطار","Train"],["سيارة","Car"],
+["طائرة","Airplane"],["سفينة","Ship"],["سيارة أجرة","Taxi"],["مسافر","Traveler"]
+]);
+add("Arabic","Feelings",[
+["سعيد","Happy (male)"],["سعيدة","Happy (female)"],["حزين","Sad (male)"],
+["غاضب","Angry (male)"],["خائف","Afraid"],["متحمس","Excited"],
+["متعب","Tired"],["هادئ","Calm"],["متفاجئ","Surprised"],["قلق","Worried"]
+]);
+add("Arabic","Weather",[
+["الطقس","Weather"],["مشمس","Sunny"],["ممطر","Rainy"],["عاصف","Stormy"],
+["غائم","Cloudy"],["ضباب","Fog"],["عاصفة","Storm"],["درجة الحرارة","Temperature"]
+]);
+add("Arabic","House",[
+["منزل","House / Home"],["غرفة","Room"],["مطبخ","Kitchen"],["حمام","Bathroom"],
+["سرير","Bed"],["طاولة","Table"],["كرسي","Chair"],["باب","Door"],
+["نافذة","Window"],["جدار","Wall"],["أرضية","Floor"],["مصباح","Lamp"],
+["مفتاح","Key"]
+]);
+add("Arabic","Questions",[
+["ماذا؟","What?"],["من؟","Who?"],["أين؟","Where?"],["إلى أين؟","Where to?"],
+["متى؟","When?"],["لماذا؟","Why?"],["كيف؟","How?"],["كم؟","How many / much?"],
+["أي؟","Which?"]
+]);
+add("Arabic","Useful Phrases",[
+["كيف حالك؟","How are you?"],["أنا بخير","I'm fine"],["ما اسمك؟","What's your name?"],
+["اسمي...","My name is..."],["لا أفهم","I don't understand"],
+["لا أعرف","I don't know"],["هل يمكنك مساعدتي؟","Can you help me?"],
+["لا مشكلة","No problem"],["أنا أتعلم العربية","I'm learning Arabic"],
+["هل تتكلم الإنجليزية؟","Do you speak English?"],
+["هل يمكنك الإعادة؟","Can you repeat?"],["حظا سعيدا","Good luck"]
+]);
+
+/* AUSTRALIAN ENGLISH */
+add("Australian English","Greetings",[
+["G'day","Hello / Good day"],["How ya going?","How are you doing?"],
+["How are you going?","How are you doing?"],["Good on ya","Well done / Good for you"],
+["No worries","It's okay / You're welcome"],["See ya","See you"],
+["Catch ya later","See you later"],["Cheers","Thanks / Goodbye"],
+["Ta","Thanks"],["Mate","Friend / Buddy"],["Welcome","Welcome"],
+["Good morning","Good morning"],["Good night","Good night"]
+]);
+add("Australian English","Everyday",[
+["Arvo","Afternoon"],["Brekkie","Breakfast"],["Barbie","Barbecue"],
+["Servo","Service station / Gas station"],["Bottle-o","Bottle shop"],
+["Maccas","McDonald's"],["Bikkie","Biscuit / Cookie"],["Sunnies","Sunglasses"],
+["Thongs","Flip-flops"],["Footy","Football (varies by code)"],
+["Ripper","Excellent"],["Heaps","A lot"],["Reckon","Think / Believe"],
+["Bloke","Man / Guy"],["Sheila","Woman (dated slang)"],
+["Cuppa","Cup of tea"],["Lollies","Sweets / Candy"],
+["Esky","Portable cooler"],["Mozzie","Mosquito"],["Aussie","Australian"],
+["Uni","University"],["Tradie","Tradesperson"],["Servo","Petrol station"],
+["Fair dinkum","Genuine / For real"],["She'll be right","It'll be okay"],
+["Chuck a sickie","Take a sick day off work"],["Trackies","Tracksuit pants"],
+["Runners","Running shoes"],["Footpath","Sidewalk"],["Petrol","Gasoline"],
+["Toilet","Restroom"],["Queue","Line"],["Holiday","Vacation"],
+["Mobile","Cell phone"],["Postie","Postal worker"],["Snag","Sausage"],
+["Sanga","Sandwich"],["Choccy","Chocolate"],["Avo","Avocado"],
+["Middy","A beer-glass size in some states"],["Bush","Rural / Wild country"]
+]);
+add("Australian English","Food",[
+["Water","Water"],["Bread","Bread"],["Milk","Milk"],["Cheese","Cheese"],
+["Egg","Egg"],["Apple","Apple"],["Banana","Banana"],["Orange","Orange"],
+["Strawberry","Strawberry"],["Tomato","Tomato"],["Potato","Potato"],
+["Chicken","Chicken"],["Beef","Beef"],["Fish","Fish"],["Rice","Rice"],
+["Sausage","Sausage"],["Biscuit","Cookie"],["Chips","Fries or crisps, depending on context"],
+["Lollies","Sweets / Candy"],["Flat white","Espresso coffee with steamed milk"],
+["Lamington","Sponge cake coated in chocolate and coconut"],
+["Pavlova","Meringue-based dessert"]
+]);
+add("Australian English","Animals",[
+["Kangaroo","Kangaroo"],["Koala","Koala"],["Wombat","Wombat"],
+["Emu","Emu"],["Platypus","Platypus"],["Kookaburra","Kookaburra"],
+["Cockatoo","Cockatoo"],["Dingo","Dingo"],["Echidna","Echidna"],
+["Possum","Possum"],["Crocodile","Crocodile"],["Magpie","Australian magpie"],
+["Snake","Snake"],["Spider","Spider"],["Shark","Shark"]
+]);
+add("Australian English","Colors",[
+["Red","Red"],["Blue","Blue"],["Green","Green"],["Yellow","Yellow"],
+["Orange","Orange"],["Purple","Purple"],["Pink","Pink"],["Black","Black"],
+["White","White"],["Grey","Gray"],["Brown","Brown"]
+]);
+add("Australian English","Adjectives",[
+["Big","Big"],["Small","Small"],["Tall","Tall"],["Short","Short"],
+["Beautiful","Beautiful"],["Good","Good"],["Bad","Bad"],["New","New"],
+["Old","Old"],["Fast","Fast"],["Slow","Slow"],["Easy","Easy"],
+["Difficult","Difficult"],["Strong","Strong"],["Weak","Weak"],
+["Hot","Hot"],["Cold","Cold"],["Clean","Clean"],["Dirty","Dirty"],
+["Stoked","Very happy / Excited"],["Heaps good","Very good"],
+["Dodgy","Unreliable / Suspicious"],["Bonza","Excellent (old-fashioned slang)"]
+]);
+add("Australian English","Verbs",[
+["Be","To be"],["Do","To do"],["Make","To make"],["Go","To go"],
+["Come","To come"],["See","To see"],["Look","To look"],["Hear","To hear"],
+["Listen","To listen"],["Speak","To speak"],["Say","To say"],["Know","To know"],
+["Understand","To understand"],["Learn","To learn"],["Teach","To teach"],
+["Read","To read"],["Write","To write"],["Work","To work"],["Play","To play"],
+["Run","To run"],["Walk","To walk"],["Jump","To jump"],["Eat","To eat"],
+["Drink","To drink"],["Sleep","To sleep"],["Love","To love"],["Want","To want"],
+["Give","To give"],["Take","To take"],["Find","To find"],["Win","To win"],
+["Lose","To lose"],["Think","To think"],["Help","To help"]
+]);
+add("Australian English","Gaming",[
+["Game","Game"],["Player","Player"],["Enemy","Enemy"],["Team","Team"],
+["Level","Level"],["Quest","Quest"],["Map","Map"],["World","World"],
+["Sword","Sword"],["Shield","Shield"],["Armour","Armor"],
+["Weapon","Weapon"],["Bow","Bow"],["Arrow","Arrow"],["Gold","Gold"],
+["Diamond","Diamond"],["Stone","Stone"],["Wood","Wood"],["Block","Block"],
+["Health","Health"],["Damage","Damage"],["Power","Power"],["Speed","Speed"],
+["Victory","Victory"],["Defeat","Defeat"],["Score","Score"],["Inventory","Inventory"],
+["Crafting","Crafting"],["Mining","Mining"],["Loot","Items collected from a game"],
+["Respawn","Return to the game after being defeated"]
+]);
+add("Australian English","Technology",[
+["Computer","Computer"],["Mobile","Mobile phone"],["Screen","Screen"],
+["Keyboard","Keyboard"],["Mouse","Mouse"],["Internet","Internet"],
+["Website","Website"],["App","Application"],["File","File"],["Folder","Folder"],
+["Password","Password"],["Account","Account"],["Program","Program"],
+["Code","Code"],["Software","Software"],["Robot","Robot"],
+["Artificial intelligence","Artificial intelligence"]
+]);
+add("Australian English","School",[
+["School","School"],["Classroom","Classroom"],["Lesson","Lesson"],
+["Homework","Homework"],["Exam","Exam"],["Mark","Grade"],["Pen","Pen"],
+["Pencil","Pencil"],["Notebook","Notebook"],["Book","Book"],["Eraser","Eraser"],
+["Ruler","Ruler"],["Maths","Mathematics"],["Science","Science"],
+["History","History"],["Geography","Geography"],["Uni","University"]
+]);
+add("Australian English","Nature",[
+["Nature","Nature"],["Tree","Tree"],["Flower","Flower"],["Leaf","Leaf"],
+["Forest","Forest"],["Mountain","Mountain"],["Sea","Sea"],["Ocean","Ocean"],
+["River","River"],["Lake","Lake"],["Island","Island"],["Sand","Sand"],
+["Earth","Earth"],["Sky","Sky"],["Sun","Sun"],["Moon","Moon"],
+["Star","Star"],["Cloud","Cloud"],["Rain","Rain"],["Snow","Snow"],
+["Wind","Wind"],["Outback","Remote inland Australia"],["Bushland","Natural bush country"]
+]);
+add("Australian English","Time",[
+["Time","Time"],["Hour","Hour"],["Minute","Minute"],["Second","Second"],
+["Day","Day"],["Week","Week"],["Month","Month"],["Year","Year"],
+["Today","Today"],["Yesterday","Yesterday"],["Tomorrow","Tomorrow"],
+["Morning","Morning"],["Arvo","Afternoon"],["Night","Night"],
+["Monday","Monday"],["Tuesday","Tuesday"],["Wednesday","Wednesday"],
+["Thursday","Thursday"],["Friday","Friday"],["Saturday","Saturday"],["Sunday","Sunday"]
+]);
+add("Australian English","Places",[
+["City","City"],["Town","Town"],["Country","Country"],["Street","Street"],
+["Road","Road"],["Park","Park"],["Hospital","Hospital"],["Shop","Store"],
+["Restaurant","Restaurant"],["Library","Library"],["Museum","Museum"],
+["Airport","Airport"],["Station","Station"],["Beach","Beach"],
+["Servo","Service station"],["Bottle-o","Bottle shop"]
+]);
+add("Australian English","Body",[
+["Body","Body"],["Head","Head"],["Hair","Hair"],["Face","Face"],
+["Eye","Eye"],["Ear","Ear"],["Nose","Nose"],["Mouth","Mouth"],
+["Tooth","Tooth"],["Neck","Neck"],["Arm","Arm"],["Hand","Hand"],
+["Finger","Finger"],["Leg","Leg"],["Foot","Foot"],["Heart","Heart"]
+]);
+add("Australian English","Clothing",[
+["Clothes","Clothing"],["Shirt","Shirt"],["Trousers","Pants"],["Shoes","Shoes"],
+["Socks","Socks"],["Jacket","Jacket"],["Coat","Coat"],["Hat","Hat"],
+["Dress","Dress"],["Skirt","Skirt"],["Jumper","Sweater"],["Thongs","Flip-flops"],
+["Sunnies","Sunglasses"],["Trackies","Tracksuit pants"]
+]);
+add("Australian English","Sports",[
+["Sport","Sport"],["Football","Football"],["AFL","Australian rules football"],
+["Rugby league","Rugby league"],["Rugby union","Rugby union"],
+["Cricket","Cricket"],["Tennis","Tennis"],["Swimming","Swimming"],
+["Cycling","Cycling"],["Ball","Ball"],["Goal","Goal"],["Match","Match"],
+["Referee","Referee"]
+]);
+add("Australian English","Travel",[
+["Travel","Travel"],["Holiday","Vacation"],["Ticket","Ticket"],
+["Passport","Passport"],["Suitcase","Suitcase"],["Bus","Bus"],
+["Train","Train"],["Car","Car"],["Plane","Airplane"],["Ship","Ship"],
+["Taxi","Taxi"],["Passenger","Passenger"],["Petrol","Gasoline"],
+["Footpath","Sidewalk"],["Roundabout","Traffic circle"]
+]);
+add("Australian English","Feelings",[
+["Happy","Happy"],["Sad","Sad"],["Angry","Angry"],["Scared","Afraid"],
+["Excited","Excited"],["Tired","Tired"],["Calm","Calm"],["Surprised","Surprised"],
+["Worried","Worried"],["Stoked","Very happy"],["Flat out","Very busy"]
+]);
+add("Australian English","Weather",[
+["Weather","Weather"],["Sunny","Sunny"],["Rainy","Rainy"],["Stormy","Stormy"],
+["Cloudy","Cloudy"],["Fog","Fog"],["Thunderstorm","Thunderstorm"],
+["Temperature","Temperature"],["Heatwave","A period of very hot weather"]
+]);
+add("Australian English","House",[
+["House","House"],["Room","Room"],["Kitchen","Kitchen"],["Bathroom","Bathroom"],
+["Bed","Bed"],["Table","Table"],["Chair","Chair"],["Door","Door"],
+["Window","Window"],["Wall","Wall"],["Floor","Floor"],["Lamp","Lamp"],
+["Key","Key"],["Backyard","Area behind a house"],["Bin","Rubbish container"]
+]);
+add("Australian English","Questions",[
+["What?","What?"],["Who?","Who?"],["Where?","Where?"],["Where to?","Where to?"],
+["When?","When?"],["Why?","Why?"],["How?","How?"],["How many?","How many?"],
+["How much?","How much?"],["Which?","Which?"]
+]);
+add("Australian English","Useful Phrases",[
+["How ya going?","How are you?"],["No worries","No problem"],
+["Good on ya","Well done"],["See ya later","See you later"],
+["I'm keen","I'm interested / Eager"],["Too easy","No problem / That's easy"],
+["Give it a go","Try it"],["Good on ya, mate","Well done, friend"],
+["I'm stuffed","I'm exhausted or very full (context-dependent)"],
+["Chuck a sickie","Take a sick day off work"],
+["Fair dinkum?","Really? / Is that true?"],
+["She'll be right","It'll be okay"],["Have a good one","Have a good day"],
+["Cheers","Thanks / Goodbye"]
+]);
+add("Australian English","Australian Expressions",[
+["G'day","Hello"],["Arvo","Afternoon"],["Brekkie","Breakfast"],
+["Barbie","Barbecue"],["Servo","Service station"],["Bottle-o","Bottle shop"],
+["Maccas","McDonald's"],["Bikkie","Biscuit"],["Sunnies","Sunglasses"],
+["Thongs","Flip-flops"],["Footy","Football"],["Ripper","Excellent"],
+["Heaps","A lot"],["Bloke","Man / Guy"],["Cuppa","Cup of tea"],
+["Lollies","Sweets"],["Esky","Portable cooler"],["Mozzie","Mosquito"],
+["Aussie","Australian"],["Uni","University"],["Tradie","Tradesperson"],
+["Snag","Sausage"],["Sanga","Sandwich"],["Avo","Avocado"],
+["Choccy","Chocolate"],["Runners","Running shoes"],["Postie","Postal worker"],
+["Dodgy","Suspicious / Unreliable"],["Stoked","Very pleased"],
+["Outback","Remote inland Australia"],["Bush","Rural natural country"]
+]);
+
+/* FRENCH */
+add("French","Greetings",[
+["Bonjour","Hello / Good morning"],["Salut","Hi / Bye"],["Bonsoir","Good evening"],
+["Bonne nuit","Good night"],["Au revoir","Goodbye"],["À bientôt","See you soon"],
+["À plus tard","See you later"],["Merci","Thank you"],["Merci beaucoup","Thank you very much"],
+["De rien","You're welcome"],["S'il vous plaît","Please (formal)"],
+["S'il te plaît","Please (informal)"],["Pardon","Sorry / Excuse me"],
+["Je suis désolé","I'm sorry (male speaker)"],
+["Bienvenue","Welcome"],["Enchanté","Nice to meet you"]
+]);
+add("French","Everyday",[
+["Oui","Yes"],["Non","No"],["Peut-être","Maybe"],["D'accord","Okay"],
+["Maintenant","Now"],["Plus tard","Later"],["Aujourd'hui","Today"],
+["Demain","Tomorrow"],["Hier","Yesterday"],["Ici","Here"],["Là-bas","Over there"],
+["Pourquoi","Why"],["Parce que","Because"],["Mais","But"],["Et","And"],
+["Ou","Or"],["Toujours","Always"],["Jamais","Never"],["Parfois","Sometimes"],
+["Quelque chose","Something"],["Rien","Nothing"],["Beaucoup","A lot"],
+["Peu","Little"],["Plus","More"],["Assez","Enough"]
+]);
+add("French","People",[
+["Personne","Person"],["Gens","People"],["Ami","Male friend"],
+["Amie","Female friend"],["Professeur","Teacher"],["Étudiant","Male student"],
+["Étudiante","Female student"],["Médecin","Doctor"],["Ingénieur","Engineer"],
+["Enfant","Child"],["Femme","Woman"],["Homme","Man"],["Voisin","Neighbor"]
+]);
+add("French","Family",[
+["Famille","Family"],["Mère","Mother"],["Père","Father"],["Maman","Mom"],
+["Papa","Dad"],["Frère","Brother"],["Sœur","Sister"],["Grand-mère","Grandmother"],
+["Grand-père","Grandfather"],["Tante","Aunt"],["Oncle","Uncle"],
+["Cousin","Male cousin"],["Cousine","Female cousin"],["Fils","Son"],["Fille","Daughter / Girl"]
+]);
+add("French","Food",[
+["Eau","Water"],["Pain","Bread"],["Lait","Milk"],["Fromage","Cheese"],
+["Œuf","Egg"],["Pomme","Apple"],["Poire","Pear"],["Banane","Banana"],
+["Orange","Orange"],["Fraise","Strawberry"],["Raisin","Grapes"],
+["Pastèque","Watermelon"],["Citron","Lemon"],["Tomate","Tomato"],
+["Pomme de terre","Potato"],["Oignon","Onion"],["Carotte","Carrot"],
+["Poulet","Chicken"],["Viande","Meat"],["Poisson","Fish"],["Riz","Rice"],
+["Soupe","Soup"],["Sucre","Sugar"],["Sel","Salt"],["Café","Coffee"],
+["Thé","Tea"],["Petit-déjeuner","Breakfast"],["Déjeuner","Lunch"],
+["Dîner","Dinner"],["Gâteau","Cake"],["Glace","Ice cream"]
+]);
+add("French","Animals",[
+["Chat","Cat"],["Chien","Dog"],["Oiseau","Bird"],["Poisson","Fish"],
+["Cheval","Horse"],["Vache","Cow"],["Mouton","Sheep"],["Lapin","Rabbit"],
+["Lion","Lion"],["Tigre","Tiger"],["Éléphant","Elephant"],["Ours","Bear"],
+["Loup","Wolf"],["Renard","Fox"],["Serpent","Snake"],["Abeille","Bee"],
+["Papillon","Butterfly"],["Tortue","Turtle"]
+]);
+add("French","Colors",[
+["Rouge","Red"],["Bleu","Blue"],["Vert","Green"],["Jaune","Yellow"],
+["Orange","Orange"],["Violet","Purple"],["Rose","Pink"],["Noir","Black"],
+["Blanc","White"],["Gris","Gray"],["Marron","Brown"]
+]);
+add("French","Adjectives",[
+["Grand","Big / Tall"],["Petit","Small"],["Long","Long"],["Court","Short"],
+["Beau","Beautiful (masculine)"],["Belle","Beautiful (feminine)"],
+["Bon","Good"],["Mauvais","Bad"],["Nouveau","New"],["Vieux","Old"],
+["Jeune","Young"],["Rapide","Fast"],["Lent","Slow"],["Facile","Easy"],
+["Difficile","Difficult"],["Fort","Strong"],["Faible","Weak"],
+["Chaud","Hot"],["Froid","Cold"],["Propre","Clean"],["Sale","Dirty"],
+["Heureux","Happy"],["Triste","Sad"],["Fatigué","Tired"]
+]);
+add("French","Verbs",[
+["Être","To be"],["Avoir","To have"],["Faire","To do / Make"],["Aller","To go"],
+["Venir","To come"],["Voir","To see"],["Regarder","To look / Watch"],
+["Entendre","To hear"],["Écouter","To listen"],["Parler","To speak"],
+["Dire","To say"],["Savoir","To know a fact"],["Connaître","To know / Be familiar with"],
+["Comprendre","To understand"],["Apprendre","To learn"],["Enseigner","To teach"],
+["Lire","To read"],["Écrire","To write"],["Dessiner","To draw"],
+["Travailler","To work"],["Jouer","To play"],["Courir","To run"],
+["Marcher","To walk"],["Sauter","To jump"],["Manger","To eat"],
+["Boire","To drink"],["Dormir","To sleep"],["Aimer","To love / Like"],
+["Vouloir","To want"],["Donner","To give"],["Prendre","To take"],
+["Trouver","To find"],["Gagner","To win / Earn"],["Perdre","To lose"],
+["Ouvrir","To open"],["Fermer","To close"],["Attendre","To wait"],
+["Penser","To think"],["Se souvenir","To remember"],["Oublier","To forget"],
+["Aider","To help"]
+]);
+add("French","Gaming",[
+["Jeu","Game"],["Joueur","Player"],["Ennemi","Enemy"],["Équipe","Team"],
+["Niveau","Level"],["Mission","Mission"],["Carte","Map"],["Monde","World"],
+["Épée","Sword"],["Bouclier","Shield"],["Armure","Armor"],["Arme","Weapon"],
+["Arc","Bow"],["Flèche","Arrow"],["Or","Gold"],["Diamant","Diamond"],
+["Pierre","Stone"],["Bois","Wood"],["Bloc","Block"],["Santé","Health"],
+["Dégâts","Damage"],["Pouvoir","Power"],["Vitesse","Speed"],
+["Victoire","Victory"],["Défaite","Defeat"],["Score","Score"],
+["Inventaire","Inventory"],["Fabrication","Crafting"],["Minage","Mining"]
+]);
+add("French","Technology",[
+["Ordinateur","Computer"],["Téléphone","Phone"],["Écran","Screen"],
+["Clavier","Keyboard"],["Souris","Mouse"],["Internet","Internet"],
+["Site web","Website"],["Application","Application"],["Fichier","File"],
+["Dossier","Folder"],["Mot de passe","Password"],["Compte","Account"],
+["Programme","Program"],["Code","Code"],["Logiciel","Software"],
+["Robot","Robot"],["Intelligence artificielle","Artificial intelligence"]
+]);
+add("French","School",[
+["École","School"],["Salle de classe","Classroom"],["Leçon","Lesson"],
+["Devoirs","Homework"],["Examen","Exam"],["Note","Grade / Mark"],
+["Stylo","Pen"],["Crayon","Pencil"],["Cahier","Notebook"],["Livre","Book"],
+["Gomme","Eraser"],["Règle","Ruler"],["Mathématiques","Mathematics"],
+["Sciences","Science"],["Histoire","History"],["Géographie","Geography"],
+["Langue","Language"]
+]);
+add("French","Nature",[
+["Nature","Nature"],["Arbre","Tree"],["Fleur","Flower"],["Feuille","Leaf"],
+["Forêt","Forest"],["Montagne","Mountain"],["Mer","Sea"],["Océan","Ocean"],
+["Rivière","River"],["Lac","Lake"],["Île","Island"],["Sable","Sand"],
+["Terre","Earth / Soil"],["Ciel","Sky"],["Soleil","Sun"],["Lune","Moon"],
+["Étoile","Star"],["Nuage","Cloud"],["Pluie","Rain"],["Neige","Snow"],
+["Vent","Wind"]
+]);
+add("French","Time",[
+["Temps","Time / Weather"],["Heure","Hour"],["Minute","Minute"],
+["Seconde","Second"],["Jour","Day"],["Semaine","Week"],["Mois","Month"],
+["Année","Year"],["Aujourd'hui","Today"],["Hier","Yesterday"],
+["Demain","Tomorrow"],["Matin","Morning"],["Après-midi","Afternoon"],
+["Soir","Evening"],["Nuit","Night"],["Lundi","Monday"],["Mardi","Tuesday"],
+["Mercredi","Wednesday"],["Jeudi","Thursday"],["Vendredi","Friday"],
+["Samedi","Saturday"],["Dimanche","Sunday"]
+]);
+add("French","Places",[
+["Ville","City"],["Village","Village"],["Pays","Country"],["Rue","Street"],
+["Route","Road"],["Parc","Park"],["Hôpital","Hospital"],["Marché","Market"],
+["Magasin","Store"],["Restaurant","Restaurant"],["Bibliothèque","Library"],
+["Musée","Museum"],["Aéroport","Airport"],["Gare","Train station"],
+["Plage","Beach"]
+]);
+add("French","Body",[
+["Corps","Body"],["Tête","Head"],["Cheveux","Hair"],["Visage","Face"],
+["Œil","Eye"],["Oreille","Ear"],["Nez","Nose"],["Bouche","Mouth"],
+["Dent","Tooth"],["Cou","Neck"],["Bras","Arm"],["Main","Hand"],
+["Doigt","Finger"],["Jambe","Leg"],["Pied","Foot"],["Cœur","Heart"]
+]);
+add("French","Clothing",[
+["Vêtements","Clothes"],["Chemise","Shirt"],["Pantalon","Trousers"],
+["Chaussures","Shoes"],["Chaussettes","Socks"],["Veste","Jacket"],
+["Manteau","Coat"],["Chapeau","Hat"],["Robe","Dress"],["Jupe","Skirt"],
+["Pull","Sweater"],["T-shirt","T-shirt"]
+]);
+add("French","Sports",[
+["Sport","Sport"],["Football","Football / Soccer"],["Basket-ball","Basketball"],
+["Volley-ball","Volleyball"],["Tennis","Tennis"],["Natation","Swimming"],
+["Vélo","Bicycle"],["Ballon","Ball"],["But","Goal"],["Match","Match"],
+["Arbitre","Referee"]
+]);
+add("French","Travel",[
+["Voyage","Trip / Travel"],["Vacances","Vacation"],["Billet","Ticket"],
+["Passeport","Passport"],["Valise","Suitcase"],["Bus","Bus"],["Train","Train"],
+["Voiture","Car"],["Avion","Airplane"],["Bateau","Boat / Ship"],
+["Taxi","Taxi"],["Passager","Passenger"]
+]);
+add("French","Feelings",[
+["Heureux","Happy (masculine)"],["Heureuse","Happy (feminine)"],
+["Triste","Sad"],["Fâché","Angry"],["Effrayé","Afraid"],
+["Enthousiaste","Excited"],["Fatigué","Tired"],["Calme","Calm"],
+["Surpris","Surprised"],["Inquiet","Worried"]
+]);
+add("French","Weather",[
+["Météo","Weather forecast"],["Ensoleillé","Sunny"],["Pluvieux","Rainy"],
+["Neigeux","Snowy"],["Venteux","Windy"],["Nuageux","Cloudy"],
+["Orage","Thunderstorm"],["Brouillard","Fog"],["Température","Temperature"]
+]);
+add("French","House",[
+["Maison","House / Home"],["Chambre","Room / Bedroom"],["Cuisine","Kitchen"],
+["Salle de bains","Bathroom"],["Lit","Bed"],["Table","Table"],["Chaise","Chair"],
+["Porte","Door"],["Fenêtre","Window"],["Mur","Wall"],["Sol","Floor"],
+["Lampe","Lamp"],["Clé","Key"]
+]);
+add("French","Questions",[
+["Quoi ?","What?"],["Qui ?","Who?"],["Où ?","Where?"],["Où ça ?","Where?"],
+["Quand ?","When?"],["Pourquoi ?","Why?"],["Comment ?","How?"],
+["Combien ?","How many / How much?"],["Lequel ?","Which one?"]
+]);
+add("French","Useful Phrases",[
+["Comment ça va ?","How are you?"],["Ça va bien","I'm doing well"],
+["Comment tu t'appelles ?","What's your name?"],
+["Je m'appelle...","My name is..."],["Je ne comprends pas","I don't understand"],
+["Je ne sais pas","I don't know"],["Tu peux m'aider ?","Can you help me?"],
+["Pas de problème","No problem"],["J'apprends le français","I'm learning French"],
+["Tu parles anglais ?","Do you speak English?"],
+["Tu peux répéter ?","Can you repeat?"],["J'aime ça","I like that"],
+["Bonne chance","Good luck"],["Bon appétit","Enjoy your meal"]
+]);
+
+/* NUMBER GENERATORS: 0–1000 */
+const unitsTR=["sıfır","bir","iki","üç","dört","beş","altı","yedi","sekiz","dokuz"];
+const tensTR=["","on","yirmi","otuz","kırk","elli","altmış","yetmiş","seksen","doksan"];
+function numberTR(n){
+ if(n<10)return unitsTR[n];
+ if(n<100)return tensTR[Math.floor(n/10)]+(n%10?" "+unitsTR[n%10]:"");
+ if(n===100)return "yüz";
+ if(n<1000)return (Math.floor(n/100)===1?"yüz":unitsTR[Math.floor(n/100)]+" yüz")+(n%100?" "+numberTR(n%100):"");
+ return "bin";
+}
+
+const unitsES=["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve"];
+const teensES=["diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve"];
+const tensES=["","","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa"];
+function numberES(n){
+ if(n<10)return unitsES[n];
+ if(n<20)return teensES[n-10];
+ if(n<30)return n===20?"veinte":"veinti"+unitsES[n-20];
+ if(n<100)return tensES[Math.floor(n/10)]+(n%10?" y "+unitsES[n%10]:"");
+ if(n===100)return "cien";
+ if(n<200)return "ciento "+numberES(n-100);
+ if(n<300)return "doscientos"+(n%100?" "+numberES(n%100):"");
+ if(n<400)return "trescientos"+(n%100?" "+numberES(n%100):"");
+ if(n<500)return "cuatrocientos"+(n%100?" "+numberES(n%100):"");
+ if(n<600)return "quinientos"+(n%100?" "+numberES(n%100):"");
+ if(n<700)return "seiscientos"+(n%100?" "+numberES(n%100):"");
+ if(n<800)return "setecientos"+(n%100?" "+numberES(n%100):"");
+ if(n<900)return "ochocientos"+(n%100?" "+numberES(n%100):"");
+ if(n<1000)return "novecientos"+(n%100?" "+numberES(n%100):"");
+ return "mil";
+}
+
+const unitsFR=["zéro","un","deux","trois","quatre","cinq","six","sept","huit","neuf"];
+const teensFR=["dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"];
+function under100FR(n){
+ if(n<10)return unitsFR[n];
+ if(n<20)return teensFR[n-10];
+ if(n<70){
+  let t=Math.floor(n/10),u=n%10;
+  let base=["","","vingt","trente","quarante","cinquante","soixante"][t];
+  if(!u)return base;
+  if(u===1)return base+" et un";
+  return base+"-"+unitsFR[u];
+ }
+ if(n<80)return n===71?"soixante et onze":"soixante-"+under100FR(n-60);
+ if(n<100)return n===80?"quatre-vingts":"quatre-vingt-"+under100FR(n-80);
+}
+function numberFR(n){
+ if(n<100)return under100FR(n);
+ if(n===100)return "cent";
+ if(n<200)return "cent "+under100FR(n-100);
+ if(n<1000){
+  let h=Math.floor(n/100),r=n%100;
+  let head=h===2?"deux cents":unitsFR[h]+" cent";
+  if(r===0&&h>1)return head;
+  return (h===1?"cent":head)+(r?" "+under100FR(r):"");
+ }
+ return "mille";
+}
+
+const unitsAR=["صفر","واحد","اثنان","ثلاثة","أربعة","خمسة","ستة","سبعة","ثمانية","تسعة"];
+const tensAR=["","عشرة","عشرون","ثلاثون","أربعون","خمسون","ستون","سبعون","ثمانون","تسعون"];
+const teensAR=["عشرة","أحد عشر","اثنا عشر","ثلاثة عشر","أربعة عشر","خمسة عشر","ستة عشر","سبعة عشر","ثمانية عشر","تسعة عشر"];
+function numberAR(n){
+ if(n<10)return unitsAR[n];
+ if(n<20)return teensAR[n-10];
+ if(n<100){
+  let t=Math.floor(n/10),u=n%10;
+  return u?unitsAR[u]+" و"+tensAR[t]:tensAR[t];
+ }
+ if(n===100)return "مئة";
+ if(n<200)return "مئة"+(n%100?" و"+numberAR(n%100):"");
+ if(n<300)return "مئتان"+(n%100?" و"+numberAR(n%100):"");
+ if(n<1000){
+  let h=Math.floor(n/100);
+  const hundreds=["","","","ثلاثمئة","أربعمئة","خمسمئة","ستمئة","سبعمئة","ثمانمئة","تسعمئة"];
+  let head=h===2?"مئتان":h===1?"مئة":hundreds[h];
+  return head+(n%100?" و"+numberAR(n%100):"");
+ }
+ return "ألف";
+}
+function numberAU(n){
+ const a=["zero","one","two","three","four","five","six","seven","eight","nine"];
+ const b=["ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+ const c=["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+ if(n<10)return a[n];
+ if(n<20)return b[n-10];
+ if(n<100)return c[Math.floor(n/10)]+(n%10?"-"+a[n%10]:"");
+ if(n<1000)return a[Math.floor(n/100)]+" hundred"+(n%100?" and "+numberAU(n%100):"");
+ if(n===1000)return "one thousand";
+ return "";
+}
+function numberAUdisplay(n){
+ if(n===1000)return "one thousand";
+ return numberAU(n);
+}
+
+/* Arabic number names above are simple standard forms.
+   French and Spanish use common written forms. */
+const numberFns={
+"Turkish":numberTR,
+"Spanish":numberES,
+"Arabic":numberAR,
+"Australian English":numberAUdisplay,
+"French":numberFR
+};
+for(const lang of Object.keys(numberFns)){
+ for(let n=0;n<=1000;n++){
+  const word=numberFns[lang](n);
+  data.push({lang,cat:"Numbers",word,en:String(n)});
+ }
+}
+
+/* Add useful numbers with English numeric labels as well.
+   The word is written in the selected language. */
+
+let language="Turkish";
+function setLang(lang,btn){
+ language=lang;
+ document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+ render();
+}
+function render(){
+ const query=document.getElementById("search").value.trim().toLowerCase();
+ const cat=document.getElementById("category").value;
+ const grid=document.getElementById("grid");
+ grid.innerHTML="";
+ const filtered=data.filter(x=>
+  (language==="All"||x.lang===language)&&
+  (cat==="All Categories"||x.cat===cat)&&
+  (x.word.toLowerCase().includes(query)||
+   x.en.toLowerCase().includes(query))
+ );
+ document.getElementById("wordCount").textContent=
+  filtered.length.toLocaleString()+" results found";
+ const fragment=document.createDocumentFragment();
+ filtered.forEach(item=>{
+  const card=document.createElement("div");
+  card.className="card";
+  if(item.lang==="Arabic")card.dir="auto";
+
+  const w=document.createElement("div");
+  w.className="word";
+  w.textContent=item.word;
+
+  const en=document.createElement("div");
+  en.className="meaning";
+  en.textContent="English: "+item.en;
+
+  const meta=document.createElement("div");
+  meta.className="meta";
+  meta.textContent=flags[item.lang]+" "+item.lang+" • "+item.cat;
+
+  const btn=document.createElement("button");
+  btn.className="copy";
+  btn.textContent="📋 Copy Word";
+  btn.onclick=async()=>{
+   try{
+    await navigator.clipboard.writeText(item.word);
+    btn.textContent="✅ Copied!";
+    setTimeout(()=>btn.textContent="📋 Copy Word",1200);
+   }catch{
+    const area=document.createElement("textarea");
+    area.value=item.word;
+    document.body.appendChild(area);
+    area.select();
+    try{
+     document.execCommand("copy");
+     btn.textContent="✅ Copied!";
+    }catch{
+     btn.textContent="Select and copy manually";
+    }
+    area.remove();
+    setTimeout(()=>btn.textContent="📋 Copy Word",1600);
+   }
+  };
+  card.append(w,en,meta,btn);
+  fragment.appendChild(card);
+ });
+ if(!filtered.length){
+  const empty=document.createElement("div");
+  empty.className="empty";
+  empty.textContent="No results found. Try another search.";
+  fragment.appendChild(empty);
+ }
+ grid.appendChild(fragment);
+}
+render();
+</script>
+</body>
+</html>
