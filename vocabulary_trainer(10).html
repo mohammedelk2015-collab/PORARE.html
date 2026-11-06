@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Multilingual Dictionary & Trainer</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-tr: #ef4444;
+            --accent-es: #eab308;
+            --accent-en: #3b82f6;
+            --border: #334155;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, var(--accent-en), var(--accent-tr), var(--accent-es));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        input, select {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-en);
+        }
+
+        .dictionary-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            flex-grow: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .sidebar {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .category-list {
+            list-style: none;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .category-item {
+            padding: 14px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .category-item:hover, .category-item.active {
+            background: rgba(255,255,255,0.04);
+        }
+
+        .category-item.active {
+            border-left: 4px solid var(--accent-en);
+            padding-left: 11px;
+            font-weight: 600;
+        }
+
+        .item-count {
+            background: var(--border);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-bottom: 20px;
+        }
+
+        .word-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .word-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .pos-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .lang-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .lang-row:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .lang-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .word-val {
+            font-weight: 600;
+            max-width: 70%;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .en-row { border-left: 3px solid var(--accent-en); }
+        .tr-row { border-left: 3px solid var(--accent-tr); }
+        .es-row { border-left: 3px solid var(--accent-es); }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stats {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .dictionary-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Global Language Matrix</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">English • Turkish • Spanish Interactive Database</p>
+    </header>
+
+    <div class="controls">
+        <input type="text" id="searchBar" placeholder="Type to search instantly across all real words...">
+        <select id="posFilter">
+            <option value="all">All Parts of Speech</option>
+            <option value="noun">Nouns</option>
+            <option value="verb">Verbs</option>
+            <option value="adjective">Adjectives</option>
+            <option value="pronoun">Pronouns / Subjects</option>
+            <option value="adverb">Adverbs</option>
+            <option value="phrase">Responses & Phrases</option>
+        </select>
+    </div>
+
+    <div class="dictionary-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">Categories</div>
+            <ul class="category-list" id="categoryList"></ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="word-grid" id="wordGrid"></div>
+            <div class="stats" id="statsCounter">Loading matrix...</div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast">Copied to Clipboard!</div>
+
+    <script>
+        const masterDictionary = [
+            // PRONOUNS / SUBJECTS
+            { en: "I", tr: "Ben", es: "Yo", cat: "Grammar Core", pos: "pronoun" },
+            { en: "You (singular)", tr: "Sen", es: "Tú", cat: "Grammar Core", pos: "pronoun" },
+            { en: "He", tr: "O (erkek)", es: "Él", cat: "Grammar Core", pos: "pronoun" },
+            { en: "She", tr: "O (kadın)", es: "Ella", cat: "Grammar Core", pos: "pronoun" },
+            { en: "It", tr: "O (cansız/hayvan)", es: "Ello / Lo", cat: "Grammar Core", pos: "pronoun" },
+            { en: "We", tr: "Biz", es: "Nosotros", cat: "Grammar Core", pos: "pronoun" },
+            { en: "You (plural)", tr: "Siz", es: "Vosotros / Ustedes", cat: "Grammar Core", pos: "pronoun" },
+            { en: "They", tr: "Onlar", es: "Ellos / Ellas", cat: "Grammar Core", pos: "pronoun" },
+            { en: "Who", tr: "Kim", es: "Quién", cat: "Grammar Core", pos: "pronoun" },
+            { en: "What", tr: "Ne", es: "Qué", cat: "Grammar Core", pos: "pronoun" },
+            { en: "Where", tr: "Nerede", es: "Dónde", cat: "Grammar Core", pos: "pronoun" },
+            { en: "Why", tr: "Neden", es: "Por qué", cat: "Grammar Core", pos: "pronoun" },
+            { en: "When", tr: "Ne zaman", es: "Cuándo", cat: "Grammar Core", pos: "pronoun" },
+            { en: "How", tr: "Nasıl", es: "Cómo", cat: "Grammar Core", pos: "pronoun" },
+
+            // CONVERSATIONAL MECHANICS & RESPONSES
+            { en: "Yes", tr: "Evet", es: "Sí", cat: "Conversational Logic", pos: "phrase" },
+            { en: "No", tr: "Hayır", es: "No", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Probably", tr: "Muhtemelen", es: "Probablemente", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Maybe", tr: "Belki", es: "Quizás / Tal vez", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Of course", tr: "Tabii ki", es: "Por supuesto", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Never mind", tr: "Boşver", es: "No importa", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Please", tr: "Lütfen", es: "Por favor", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Thank you", tr: "Teşekkür ederim", es: "Gracias", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Hello", tr: "Merhaba", es: "Hola", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Goodbye", tr: "Hoşça kal", es: "Adiós", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Good morning", tr: "Günaydın", es: "Buenos días", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Good night", tr: "İyi geceler", es: "Buenas noches", cat: "Conversational Logic", pos: "phrase" },
+            { en: "How are you?", tr: "Nasılsın?", es: "¿Cómo estás?", cat: "Conversational Logic", pos: "phrase" },
+            { en: "I am fine", tr: "İyiyim", es: "Estoy bien", cat: "Conversational Logic", pos: "phrase" },
+            { en: "No problem", tr: "Sorun değil", es: "No hay problema", cat: "Conversational Logic", pos: "phrase" },
+            { en: "Excuse me", tr: "Affedersiniz", es: "Disculpe", cat: "Conversational Logic", pos: "phrase" },
+
+            // ESSENTIAL VERBS
+            { en: "To be", tr: "Olmak", es: "Ser / Estar", cat: "Essential Actions", pos: "verb" },
+            { en: "To have", tr: "Sahip olmak", es: "Tener", cat: "Essential Actions", pos: "verb" },
+            { en: "To do / make", tr: "Yapmak", es: "Hacer", cat: "Essential Actions", pos: "verb" },
+            { en: "To go", tr: "Gitmek", es: "Ir", cat: "Essential Actions", pos: "verb" },
+            { en: "To come", tr: "Gelmek", es: "Venir", cat: "Essential Actions", pos: "verb" },
+            { en: "To speak", tr: "Konuşmak", es: "Hablar", cat: "Essential Actions", pos: "verb" },
+            { en: "To eat", tr: "Yemek yemek", es: "Comer", cat: "Essential Actions", pos: "verb" },
+            { en: "To drink", tr: "İçmek", es: "Beber", cat: "Essential Actions", pos: "verb" },
+            { en: "To see", tr: "Görmek", es: "Ver", cat: "Essential Actions", pos: "verb" },
+            { en: "To know", tr: "Bilmek", es: "Saber / Conocer", cat: "Essential Actions", pos: "verb" },
+            { en: "To want", tr: "İstemek", es: "Querer", cat: "Essential Actions", pos: "verb" },
+            { en: "To read", tr: "Okumak", es: "Leer", cat: "Essential Actions", pos: "verb" },
+            { en: "To write", tr: "Yazmak", es: "Escribir", cat: "Essential Actions", pos: "verb" },
+            { en: "To learn", tr: "Öğrenmek", es: "Aprender", cat: "Essential Actions", pos: "verb" },
+            { en: "To live", tr: "Yaşamak", es: "Vivir", cat: "Essential Actions", pos: "verb" },
+            { en: "To understand", tr: "Anlamak", es: "Entender", cat: "Essential Actions", pos: "verb" },
+
+            // LIVING SPACE NOUNS
+            { en: "House", tr: "Ev", es: "Casa", cat: "Living & Environment", pos: "noun" },
+            { en: "Door", tr: "Kapı", es: "Puerta", cat: "Living & Environment", pos: "noun" },
+            { en: "Window", tr: "Pencere", es: "Ventana", cat: "Living & Environment", pos: "noun" },
+            { en: "Table", tr: "Masa", es: "Mesa", cat: "Living & Environment", pos: "noun" },
+            { en: "Chair", tr: "Sandalye", es: "Silla", cat: "Living & Environment", pos: "noun" },
+            { en: "Bed", tr: "Yatak", es: "Cama", cat: "Living & Environment", pos: "noun" },
+            { en: "Room", tr: "Oda", es: "Habitación", cat: "Living & Environment", pos: "noun" },
+            { en: "Key", tr: "Anahtar", es: "Llave", cat: "Living & Environment", pos: "noun" },
+
+            // FOOD NOUNS
+            { en: "Bread", tr: "Ekmek", es: "Pan", cat: "Food Matrix", pos: "noun" },
+            { en: "Water", tr: "Su", es: "Agua", cat: "Food Matrix", pos: "noun" },
+            { en: "Cheese", tr: "Peynir", es: "Queso", cat: "Food Matrix", pos: "noun" },
+            { en: "Milk", tr: "Süt", es: "Leche", cat: "Food Matrix", pos: "noun" },
+            { en: "Meat", tr: "Et", es: "Carne", cat: "Food Matrix", pos: "noun" },
+            { en: "Apple", tr: "Elma", es: "Manzana", cat: "Food Matrix", pos: "noun" },
+            { en: "Egg", tr: "Yumurta", es: "Huevo", cat: "Food Matrix", pos: "noun" },
+
+            // ANIMALS
+            { en: "Dog", tr: "Köpek", es: "Perro", cat: "Animals", pos: "noun" },
+            { en: "Cat", tr: "Kedi", es: "Gato", cat: "Animals", pos: "noun" },
+            { en: "Bird", tr: "Kuş", es: "Pájaro", cat: "Animals", pos: "noun" },
+            { en: "Horse", tr: "At", es: "Caballo", cat: "Animals", pos: "noun" },
+
+            // ADJECTIVES & DESCRIPTORS
+            { en: "Big", tr: "Büyük", es: "Grande", cat: "Traits & Descriptors", pos: "adjective" },
+            { en: "Small", tr: "Küçük", es: "Pequeño", cat: "Traits & Descriptors", pos: "adjective" },
+            { en: "Good", tr: "İyi", es: "Bueno", cat: "Traits & Descriptors", pos: "adjective" },
+            { en: "Bad", tr: "Kötü", es: "Malo", cat: "Traits & Descriptors", pos: "adjective" },
+            { en: "Always", tr: "Her zaman", es: "Siempre", cat: "Traits & Descriptors", pos: "adverb" },
+            { en: "Never", tr: "Asla", es: "Nunca", cat: "Traits & Descriptors", pos: "adverb" },
+            { en: "And", tr: "Ve", es: "Y", cat: "Grammar Core", pos: "phrase" },
+            { en: "But", tr: "Ama", es: "Pero", cat: "Grammar Core", pos: "phrase" },
+            { en: "Or", tr: "Veya", es: "O", cat: "Grammar Core", pos: "phrase" }
+        ];
+
+        let selectedCategory = "all";
+        const searchBar = document.getElementById('searchBar');
+        const posFilter = document.getElementById('posFilter');
+        const categoryList = document.getElementById('categoryList');
+        const wordGrid = document.getElementById('wordGrid');
+        const statsCounter = document.getElementById('statsCounter');
+        const toast = document.getElementById('toast');
+
+        function init() {
+            renderSidebar();
+            renderGrid();
+            searchBar.addEventListener('input', renderGrid);
+            posFilter.addEventListener('change', renderGrid);
+        }
+
+        function renderSidebar() {
+            const categories = {};
+            masterDictionary.forEach(item => {
+                categories[item.cat] = (categories[item.cat] || 0) + 1;
+            });
+
+            let sidebarHTML = `<li class="category-item active" data-cat="all" onclick="selectCategory('all', this)">
+                <span>All Real Words</span>
+                <span class="item-count">${masterDictionary.length}</span>
+            </li>`;
+
+            for (const [name, count] of Object.entries(categories)) {
+                sidebarHTML += `<li class="category-item" data-cat="${name}" onclick="selectCategory('${name}', this)">
+                    <span>${name}</span>
+                    <span class="item-count">${count}</span>
+                </li>`;
+            }
+            categoryList.innerHTML = sidebarHTML;
+        }
+
+        function selectCategory(cat, el) {
+            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            selectedCategory = cat;
+            renderGrid();
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 1500);
+            });
+        }
+
+        function renderGrid() {
+            const query = searchBar.value.toLowerCase().trim();
+            const pos = posFilter.value;
+            wordGrid.innerHTML = '';
+            let count = 0;
+
+            masterDictionary.forEach(item => {
+                if (selectedCategory !== 'all' && item.cat !== selectedCategory) return;
+                if (pos !== 'all' && item.pos !== pos) return;
+
+                if (query) {
+                    const match = item.en.toLowerCase().includes(query) ||
+                                  item.tr.toLowerCase().includes(query) ||
+                                  item.es.toLowerCase().includes(query);
+                    if (!match) return;
+                }
+
+                count++;
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `
+                    <span class="pos-badge">${item.pos}</span>
+                    <div class="lang-row en-row" onclick="copyToClipboard('${item.en.replace(/'/g, "\\'")}')">
+                        <span class="lang-label">🇺🇸 EN:</span>
+                        <span class="word-val">${item.en}</span>
+                    </div>
+                    <div class="lang-row tr-row" onclick="copyToClipboard('${item.tr.replace(/'/g, "\\'")}')">
+                        <span class="lang-label">🇹🇷 TR:</span>
+                        <span class="word-val">${item.tr}</span>
+                    </div>
+                    <div class="lang-row es-row" onclick="copyToClipboard('${item.es.replace(/'/g, "\\'")}')">
+                        <span class="lang-label">🇪🇸 ES:</span>
+                        <span class="word-val">${item.es}</span>
+                    </div>
+                `;
+                wordGrid.appendChild(card);
+            });
+            statsCounter.innerText = `Displaying ${count} entries`;
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

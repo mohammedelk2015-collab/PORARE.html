@@ -207,13 +207,49 @@ h1{
 
 
 .search{
-
     display:flex;
-
     gap:8px;
+    margin:30px auto;
+    max-width:720px;
+    padding:8px;
+    background:#191e2b;
+    border:2px solid #ff5722;
+    border-radius:30px;
+    box-shadow:0 0 22px rgba(255,87,34,.18);
+}
 
-    margin:25px 0;
+.search input{
+    background:#0e1420;
+    border:0;
+    border-radius:24px;
+    color:white;
+    padding:17px 22px;
+    font-size:17px;
+}
 
+.search button{
+    background:#ff5722;
+    color:white;
+    border-radius:24px;
+    padding:0 25px;
+}
+
+#homepage{
+    min-height:calc(100vh - 180px);
+    padding:65px 25px;
+    text-align:center;
+    background:#10131c;
+}
+
+#homepage h1{
+    font-size:46px;
+    color:#ff5722;
+    margin-top:45px;
+}
+
+#homepage .subtitle{
+    color:#aab4c8;
+    font-size:17px;
 }
 
 
@@ -570,6 +606,17 @@ h1{
 
 }
 
+
+/* FIRE_STORM MULTI-TAB STYLES */
+.tabToggle,.newTabButton{background:#ff5722;color:white;padding:10px 14px;cursor:pointer;font-weight:bold}
+#tabSidebar{display:none;position:fixed;z-index:20;left:0;top:180px;bottom:0;width:190px;padding:12px;overflow-y:auto;background:#111622;border-right:1px solid #30384a}
+body.tabs-open #tabSidebar{display:block}
+#tabSidebar .newTabButton{width:100%;margin-bottom:12px}
+.tabEntry{display:flex;align-items:center;gap:5px;margin-bottom:8px;padding:7px;border-radius:8px;background:#292f40}
+.tabEntry.active{background:#ff5722}
+.tabSelect{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:white;background:transparent;text-align:left;cursor:pointer}
+.tabClose{color:white;background:#42495a;padding:5px 8px;cursor:pointer}
+
 </style>
 
 </head>
@@ -591,13 +638,13 @@ h1{
 
 
 <div class="tabs">
-
-    <div class="tab active" onclick="home()">🏠 Home</div>
-
-    <div class="tab" onclick="newTab()">＋ New tab</div>
-
+    <button class="tabToggle" onclick="toggleTabsSidebar()">☰ Tabs</button>
     <div class="tab" onclick="openAI()">🔥 Fire Helper</div>
+</div>
 
+<div id="tabSidebar">
+    <button class="newTabButton" onclick="newTab()">＋ New Tab</button>
+    <div id="tabList"></div>
 </div>
 
 
@@ -840,204 +887,176 @@ What would you like to ask?
 
 
 
-/* BROWSER */
 
-
+/* BROWSER — FIRE_STORM MULTI-TAB SYSTEM */
 
 const address=document.getElementById('address');
-
-const viewer=document.getElementById('viewer');
-
 const homepage=document.getElementById('homepage');
+const tabList=document.getElementById('tabList');
 
-
-
-let historyList=[];
-
-let historyIndex=-1;
+let browserTabs=[];
+let activeTabId=null;
+let tabCounter=0;
+let sidebarVisible=false;
 let currentURL='';
 
-
-
-function visit(url){
-
-    load(url,true);
-
+function activeTab(){
+    return browserTabs.find(t=>t.id===activeTabId)||null;
 }
 
+function renderTabs(){
+    tabList.innerHTML='';
+    browserTabs.forEach(tab=>{
+        const row=document.createElement('div');
+        row.className='tabEntry'+(tab.id===activeTabId?' active':'');
+        const select=document.createElement('button');
+        select.className='tabSelect';
+        select.textContent=tab.title||'New Tab';
+        select.title=tab.url||'New Tab';
+        select.onclick=()=>selectBrowserTab(tab.id);
+        const close=document.createElement('button');
+        close.className='tabClose';
+        close.textContent='×';
+        close.title='Close tab';
+        close.onclick=()=>closeBrowserTab(tab.id);
+        row.append(select,close);
+        tabList.appendChild(row);
+    });
+}
 
+function createBrowserTab(){
+    const id='fire-tab-'+(++tabCounter);
+    browserTabs.push({id,title:'New Tab',url:'',history:[],historyIndex:-1});
+    window.fireStormView.createTab(id);
+    selectBrowserTab(id);
+}
+
+function selectBrowserTab(id){
+    const tab=browserTabs.find(t=>t.id===id);
+    if(!tab)return;
+    activeTabId=id;
+    currentURL=tab.url;
+    address.value=tab.url;
+    window.fireStormView.selectTab(id);
+    if(document.getElementById('aiPanel').style.display==='block'){
+        window.fireStormView.hide(id);
+    }else if(tab.url){
+        homepage.style.display='none';
+        window.fireStormView.show(id);
+    }else{
+        window.fireStormView.hide(id);
+        homepage.style.display='block';
+    }
+    renderTabs();
+}
+
+function visit(url){load(url,true)}
 
 function getSearchURL(value){
-
-
-
-    let text=value.trim().toLowerCase();
-
-
-
-    if(/chatgpt/.test(text)){
-
-        return 'https://mohammedelk2015-collab.github.io/game.html/chatgpt.html';
-
-    }
-
-
-
-    if(/crazy\s*games?/.test(text)){
-
-        return 'https://www.crazygames.com/';
-
-    }
-
-
-
-    if(/\bmaps?\b/.test(text)){
-
-        return 'https://mohammedelk2015-collab.github.io/game.html/map.html';
-
-    }
-
-
-
-    if(/^https?:\/\//i.test(value)){
-
-        return value;
-
-    }
-
-
-
-    if(value.includes('.')&&!value.includes(' ')){
-
-        return 'https://'+value;
-
-    }
-
-
-
-    return 'https://www.google.com/search?q='+encodeURIComponent(value);
-
+    let text=value.trim();
+    let lower=text.toLowerCase();
+    if(!text)return 'https://www.google.com/';
+    if(/chatgpt/.test(lower))return 'https://mohammedelk2015-collab.github.io/game.html/chatgpt.html';
+    if(/crazy\s*games?/.test(lower))return 'https://www.crazygames.com/';
+    if(/\bmaps?\b/.test(lower))return 'https://mohammedelk2015-collab.github.io/game.html/map.html';
+    if(/^https?:\/\//i.test(text))return text;
+    if(/^[\w-]+(\.[\w-]+)+(:\d+)?(\/.*)?$/.test(text))return 'https://'+text;
+    return 'https://www.google.com/search?q='+encodeURIComponent(text);
 }
-
-
 
 function navigate(){
-
-
-
-    let value=address.value.trim();
-
-
-
-    if(!value)return;
-
-
-
-    visit(getSearchURL(value));
-
+    const value=address.value.trim();
+    if(value)visit(getSearchURL(value));
 }
-
-
 
 function load(url,addHistory){
+    const tab=activeTab();
+    if(!tab)return;
+    if(document.getElementById('aiPanel').style.display==='block')closeAI();
     homepage.style.display='none';
     currentURL=url;
+    tab.url=url;
     address.value=url;
-
-    window.fireStormView.navigate(url);
-
     if(addHistory){
-        historyList=historyList.slice(0,historyIndex+1);
-        historyList.push(url);
-        historyIndex=historyList.length-1;
+        tab.history=tab.history.slice(0,tab.historyIndex+1);
+        tab.history.push(url);
+        tab.historyIndex=tab.history.length-1;
     }
+    window.fireStormView.navigate(tab.id,url);
+    renderTabs();
 }
-
-
 
 function searchWeb(){
-
-
-
-    let q=document.getElementById('search').value.trim();
-
-
-
-    if(!q)return;
-
-
-
-    visit(getSearchURL(q));
-
+    const q=document.getElementById('search').value.trim();
+    if(q)visit(getSearchURL(q));
 }
-
-
 
 function home(){
-    window.fireStormView.hide();
-    currentURL='';
+    const tab=activeTab();
+    if(tab){
+        tab.url='';
+        currentURL='';
+        window.fireStormView.hide(tab.id);
+    }
     homepage.style.display='block';
     address.value='';
+    renderTabs();
 }
-
-
 
 function back(){
-
-
-
-    if(historyIndex>0){
-
-
-
-        historyIndex--;
-
-
-
-        load(historyList[historyIndex],false);
-
+    const tab=activeTab();
+    if(tab&&tab.historyIndex>0){
+        tab.historyIndex--;
+        load(tab.history[tab.historyIndex],false);
     }
-
 }
-
-
 
 function forward(){
-
-
-
-    if(historyIndex<historyList.length-1){
-
-
-
-        historyIndex++;
-
-
-
-        load(historyList[historyIndex],false);
-
+    const tab=activeTab();
+    if(tab&&tab.historyIndex<tab.history.length-1){
+        tab.historyIndex++;
+        load(tab.history[tab.historyIndex],false);
     }
-
 }
-
-
 
 function reload(){
-    if(currentURL){
-        window.fireStormView.navigate(currentURL);
+    const tab=activeTab();
+    if(tab&&tab.url)window.fireStormView.navigate(tab.id,tab.url);
+}
+
+function newTab(){
+    if(document.getElementById('aiPanel').style.display==='block')closeAI();
+    createBrowserTab();
+}
+
+function closeBrowserTab(id){
+    const index=browserTabs.findIndex(t=>t.id===id);
+    if(index<0)return;
+    const wasActive=activeTabId===id;
+    window.fireStormView.closeTab(id);
+    browserTabs.splice(index,1);
+    if(browserTabs.length===0){
+        activeTabId=null;
+        createBrowserTab();
+    }else if(wasActive){
+        selectBrowserTab(browserTabs[Math.min(index,browserTabs.length-1)].id);
+    }else{
+        renderTabs();
     }
 }
 
-
-
-function newTab(){
-
-    home();
-
+function toggleTabsSidebar(){
+    sidebarVisible=!sidebarVisible;
+    document.body.classList.toggle('tabs-open',sidebarVisible);
+    window.fireStormView.setSidebar(sidebarVisible);
 }
 
+window.fireStormView.onTabTitle((id,title)=>{
+    const tab=browserTabs.find(t=>t.id===id);
+    if(tab&&title){tab.title=title;renderTabs();}
+});
 
-
+createBrowserTab();
 
 
 /* FIRE HELPER uses the backend deployed on the same domain. Keep API keys on the server. */
@@ -1054,25 +1073,23 @@ let isAISending=false;
 
 
 function openAI(){
-
-
-
+    const tab=activeTab();
+    if(tab)window.fireStormView.hide(tab.id);
     document.getElementById('aiPanel').style.display='block';
-
-
-
     document.getElementById('aiInput').focus();
-
 }
 
 
 
 function closeAI(){
-
-
-
     document.getElementById('aiPanel').style.display='none';
-
+    const tab=activeTab();
+    if(tab&&tab.url){
+        homepage.style.display='none';
+        window.fireStormView.show(tab.id);
+    }else{
+        homepage.style.display='block';
+    }
 }
 
 

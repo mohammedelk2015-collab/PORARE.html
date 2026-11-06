@@ -1,0 +1,642 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIRE SCRATCH 2.0</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10131c;color:white;font-family:Arial,sans-serif}
+header{height:64px;background:#191e2b;border-bottom:2px solid #ff5722;display:flex;align-items:center;gap:12px;padding:0 16px;flex-wrap:wrap}
+.logo{font-size:21px;font-weight:bold;color:#ff5722}
+.logo span{color:white}
+button,select,input{font:inherit}
+button{border:0;border-radius:7px;padding:9px 12px;background:#30394e;color:white;cursor:pointer}
+button:hover{filter:brightness(1.2)}
+button.orange{background:#ff5722;color:white}
+button.green{background:#20b85a}
+button.red{background:#d94444}
+input,select{background:#171e2d;color:white;border:1px solid #46516b;border-radius:6px;padding:7px;max-width:100%}
+#projectName{width:160px}
+main{display:grid;grid-template-columns:235px minmax(280px,1fr) 370px;height:calc(100vh - 64px)}
+.panel{background:#1b2130;border-right:1px solid #30394e;min-width:0;overflow:auto}
+.panelTitle{padding:13px;font-weight:bold;border-bottom:1px solid #30394e;color:#ff9a70}
+.categories{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:9px}
+.cat{font-size:12px;padding:10px 4px}
+.cat.active{outline:2px solid white}
+#palette{padding:10px}
+.block{padding:10px;margin:7px 0;border-radius:8px;color:#fff;cursor:grab;font-size:13px;box-shadow:0 2px 3px #0005;user-select:none}
+.block input{width:65px;background:#ffffff;color:#222;border:0;padding:3px}
+.block select{background:#fff;color:#222;border:0;padding:3px}
+.motion{background:#4388db}.looks{background:#9b59c7}.sound{background:#cf8b19}
+.events{background:#d6a900;color:#222}.control{background:#e58b27}
+.sensing{background:#35a9b8}.operators{background:#58a65c}
+.variables{background:#e45b58}.myblocks{background:#a35b9f}
+.extensions{background:#168e83}
+#workspacePanel{display:flex;flex-direction:column;background:#151a27}
+.toolbar{padding:10px;display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid #30394e}
+#workspace{flex:1;overflow:auto;padding:15px;background-color:#151a27;
+background-image:radial-gradient(#30394e 1px,transparent 1px);background-size:18px 18px}
+#workspace.empty:after{content:"Drag blocks here or click a block in the palette";color:#77839b;display:block;text-align:center;margin-top:55px}
+.stackBlock{display:flex;align-items:center;gap:7px;flex-wrap:wrap;width:max-content;max-width:100%;margin:7px 0;padding:9px 11px;border-radius:8px;color:white;font-size:13px;box-shadow:0 3px 5px #0005}
+.stackBlock input{width:65px;background:white;color:#222;border:0}
+.stackBlock select{background:white;color:#222;border:0}
+.stackBlock button{padding:3px 7px;background:#0004}
+.right{display:flex;flex-direction:column;overflow:auto}
+.stageArea{padding:12px;border-bottom:1px solid #30394e}
+.stageTop{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-bottom:9px}
+#stage{height:260px;background:#fff;border-radius:7px;position:relative;overflow:hidden;color:#111}
+#sprite{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:55px;transition:transform .1s}
+#speech{position:absolute;top:12px;left:12px;background:white;border:2px solid #333;border-radius:12px;padding:8px;display:none;max-width:80%;color:#111}
+.spriteArea{padding:12px;border-bottom:1px solid #30394e}
+#sprites{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+.spriteCard{background:#30394e;padding:9px;border-radius:7px;cursor:pointer;font-size:24px}
+.spriteCard.selected{outline:2px solid #ff5722}
+.tabs{display:flex;gap:5px;padding:10px;border-bottom:1px solid #30394e}
+.tab.active{background:#ff5722}
+.tabContent{padding:12px}
+.hidden{display:none!important}
+#costumeCanvas{background:white;border-radius:6px;touch-action:none;max-width:100%}
+.soundItem{background:#30394e;border-radius:7px;padding:8px;margin:7px 0;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.small{font-size:12px;color:#aeb8ca}
+@media(max-width:850px){
+ main{grid-template-columns:180px minmax(250px,1fr);height:auto;min-height:calc(100vh - 64px)}
+ .right{grid-column:1/-1}
+ #stage{height:240px}
+}
+@media(max-width:560px){
+ main{grid-template-columns:1fr}
+ .panel{max-height:360px}
+ #workspacePanel{height:450px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">🔥 FIRE SCRATCH <span>2.0</span></div>
+ <input id="projectName" value="My Project" aria-label="Project name">
+ <button class="green" onclick="runCode()">▶ Run</button>
+ <button class="red" onclick="stopCode()">■ Stop</button>
+ <button onclick="saveProject()">💾 Save</button>
+ <button onclick="loadProject()">📂 Load</button>
+ <button onclick="exportProject()">⬇ Export</button>
+ <input id="importFile" type="file" accept=".json,.fireproject" hidden onchange="importProject(event)">
+</header>
+
+<main>
+ <section class="panel">
+  <div class="panelTitle">🧱 BLOCKS</div>
+  <div class="categories" id="categories"></div>
+  <div id="palette"></div>
+ </section>
+
+ <section id="workspacePanel">
+  <div class="toolbar">
+   <button class="green" onclick="runCode()">▶ Run</button>
+   <button class="red" onclick="stopCode()">■ Stop</button>
+   <button onclick="clearWorkspace()">🗑 Clear</button>
+   <button onclick="addComment()">💬 Comment</button>
+  </div>
+  <div id="workspace" class="empty"></div>
+ </section>
+
+ <section class="panel right">
+  <div class="stageArea">
+   <div class="stageTop">
+    <strong>🎬 STAGE</strong>
+    <select id="backdrop" onchange="changeBackdrop()">
+     <option value="#ffffff">White</option>
+     <option value="#8bd4ff">Sky</option>
+     <option value="#101b42">Night</option>
+     <option value="#542d83">Space</option>
+     <option value="#70bd68">Green</option>
+     <option value="#ffcf80">Sunset</option>
+    </select>
+   </div>
+   <div id="stage">
+    <div id="speech"></div>
+    <div id="sprite">🐱</div>
+   </div>
+  </div>
+
+  <div class="spriteArea">
+   <strong>🧍 SPRITES</strong>
+   <div id="sprites"></div>
+   <button class="orange" onclick="addSprite()">＋ Add Sprite</button>
+   <button onclick="deleteSprite()">Delete Sprite</button>
+  </div>
+
+  <div class="tabs">
+   <button class="tab active" onclick="showTab('costumes',this)">🎨 Costumes</button>
+   <button class="tab" onclick="showTab('sounds',this)">🔊 Sounds</button>
+  </div>
+
+  <div id="costumes" class="tabContent">
+   <strong>Costume editor</strong>
+   <p class="small">Draw a costume or upload an image.</p>
+   <canvas id="costumeCanvas" width="300" height="170"></canvas>
+   <p>
+    <button onclick="setDrawMode('draw')">✏️ Draw</button>
+    <button onclick="setDrawMode('erase')">Eraser</button>
+    <input type="color" id="paintColor" value="#ff5722">
+   </p>
+   <p>
+    <button onclick="clearCostume()">Clear</button>
+    <button class="orange" onclick="applyCostume()">Apply Costume</button>
+    <input type="file" accept="image/*" onchange="uploadCostume(event)">
+   </p>
+  </div>
+
+  <div id="sounds" class="tabContent hidden">
+   <strong>Sound studio</strong>
+   <p class="small">Create sounds, record audio or upload sound files.</p>
+   <div class="soundItem">
+    <button onclick="makeSound('Pop')">Pop</button>
+    <button onclick="makeSound('Beep')">Beep</button>
+    <button onclick="makeSound('Boing')">Boing</button>
+    <button onclick="makeSound('Laser')">Laser</button>
+   </div>
+   <div class="soundItem">
+    <button class="orange" onclick="startRecording()">● Record</button>
+    <button class="red" onclick="stopRecording()">■ Stop recording</button>
+   </div>
+   <p><input type="file" accept="audio/*" onchange="uploadSound(event)"></p>
+   <div id="soundList"></div>
+  </div>
+ </section>
+</main>
+
+<script>
+const definitions={
+ Motion:{color:"motion",blocks:[
+  ["move","Move","steps",10],["turn","Turn","degrees",15],
+  ["goto","Go to x:","x",0,"y",0],["glide","Glide for","seconds",1,"x",100,"y",50],
+  ["bounce","Bounce at edge"],["direction","Point in direction","degrees",90]
+ ]},
+ Looks:{color:"looks",blocks:[
+  ["say","Say","message","Hello!"],["think","Think","message","Hmm..."],
+  ["show","Show"],["hide","Hide"],["size","Set size to","percent",100],
+  ["changeSize","Change size by","amount",10],["nextCostume","Next costume"],
+  ["nextBackdrop","Next backdrop"]
+ ]},
+ Sound:{color:"sound",blocks:[
+  ["playSound","Play sound","sound","Pop"],
+  ["playSoundWait","Play sound until done","sound","Pop"],
+  ["stopSounds","Stop all sounds"],["volume","Set volume to","percent",100]
+ ]},
+ Events:{color:"events",blocks:[
+  ["flag","When green flag clicked"],["key","When key pressed","key","space"],
+  ["clicked","When this sprite clicked"],["broadcast","Broadcast","message","message1"],
+  ["receive","When I receive","message","message1"]
+ ]},
+ Control:{color:"control",blocks:[
+  ["wait","Wait","seconds",1],["repeat","Repeat","times",3],
+  ["forever","Forever"],["if","If","condition","true"],
+  ["ifelse","If / else","condition","true"],["stop","Stop"]
+ ]},
+ Sensing:{color:"sensing",blocks:[
+  ["touching","Touching","target","edge"],["keySensing","Key pressed?","key","space"],
+  ["mouseX","Mouse x position"],["mouseY","Mouse y position"],
+  ["ask","Ask","question","What's your name?"]
+ ]},
+ Operators:{color:"operators",blocks:[
+  ["random","Pick random","min",1,"max",10],
+  ["add","Add","a",2,"b",3],["subtract","Subtract","a",5,"b",2],
+  ["multiply","Multiply","a",3,"b",4],["divide","Divide","a",8,"b",2],
+  ["join","Join","a","Hello ","b","world"],
+  ["less","Less than?","a",2,"b",5],["equal","Equal?","a",5,"b",5]
+ ]},
+ Variables:{color:"variables",blocks:[
+  ["setVar","Set variable","name","score","value",0],
+  ["changeVar","Change variable","name","score","value",1],
+  ["showVar","Show variable","name","score"]
+ ]},
+ "My Blocks":{color:"myblocks",blocks:[
+  ["custom","My custom block","name","my block"]
+ ]},
+ Extensions:{color:"extensions",blocks:[
+  ["penDown","Pen down"],["penUp","Pen up"],["stamp","Stamp"],
+  ["erase","Erase all"]
+ ]}
+};
+
+const categories=Object.keys(definitions);
+let activeCategory="Motion";
+let stack=[];
+let sprites=[
+ {name:"Cat",emoji:"🐱",x:0,y:0,size:100,visible:true,costumes:[],costume:0}
+];
+let selectedSprite=0;
+let sounds=[];
+let variables={};
+let running=false;
+let runToken=0;
+let recorder=null;
+let recordingChunks=[];
+let drawMode="draw";
+let drawing=false;
+let audioContext=null;
+let backdropIndex=0;
+const backdrops=["#ffffff","#8bd4ff","#101b42","#542d83","#70bd68","#ffcf80"];
+
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+
+function makeCategories(){
+ $("categories").innerHTML="";
+ categories.forEach(name=>{
+  const b=document.createElement("button");
+  b.className="cat";
+  b.textContent=name;
+  b.style.background=categoryColor(name);
+  b.onclick=()=>selectCategory(name);
+  $("categories").appendChild(b);
+ });
+ selectCategory("Motion");
+}
+function categoryColor(name){
+ return ({
+ Motion:"#4388db",Looks:"#9b59c7",Sound:"#cf8b19",Events:"#d6a900",
+ Control:"#e58b27",Sensing:"#35a9b8",Operators:"#58a65c",
+ Variables:"#e45b58","My Blocks":"#a35b9f",Extensions:"#168e83"
+ })[name];
+}
+function selectCategory(name){
+ activeCategory=name;
+ [...$("categories").children].forEach((b,i)=>b.classList.toggle("active",categories[i]===name));
+ $("palette").innerHTML="";
+ const def=definitions[name];
+ def.blocks.forEach(spec=>{
+  const el=document.createElement("div");
+  el.className="block "+def.color;
+  el.draggable=true;
+  el.dataset.type=spec[0];
+  el.innerHTML=makeBlockLabel(spec);
+  el.addEventListener("click",()=>addBlock(spec));
+  el.addEventListener("dragstart",e=>{
+   e.dataTransfer.setData("text/plain",JSON.stringify(spec));
+  });
+  $("palette").appendChild(el);
+ });
+}
+function makeBlockLabel(spec){
+ let html="<b>"+escapeHTML(spec[1])+"</b>";
+ for(let i=2;i<spec.length;i+=2){
+  html+=' <input value="'+escapeHTML(String(spec[i+1]))+'" aria-label="'+escapeHTML(spec[i])+'">';
+ }
+ return html;
+}
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function addBlock(spec){
+ const args=[];
+ for(let i=2;i<spec.length;i+=2)args.push(spec[i+1]);
+ stack.push({type:spec[0],label:spec[1],args,category:activeCategory});
+ renderStack();
+}
+$("workspace").addEventListener("dragover",e=>e.preventDefault());
+$("workspace").addEventListener("drop",e=>{
+ e.preventDefault();
+ try{
+  const spec=JSON.parse(e.dataTransfer.getData("text/plain"));
+  const args=[];
+  for(let i=2;i<spec.length;i+=2)args.push(spec[i+1]);
+  stack.push({type:spec[0],label:spec[1],args,category:activeCategory});
+  renderStack();
+ }catch{}
+});
+function renderStack(){
+ const area=$("workspace");
+ area.innerHTML="";
+ area.classList.toggle("empty",stack.length===0);
+ stack.forEach((block,index)=>{
+  const el=document.createElement("div");
+  el.className="stackBlock";
+  el.style.background=categoryColor(block.category);
+  let html="<b>"+escapeHTML(block.label)+"</b>";
+  block.args.forEach((arg,i)=>{
+   html+=' <input data-index="'+index+'" data-arg="'+i+'" value="'+escapeHTML(String(arg))+'">';
+  });
+  html+=' <button data-remove="'+index+'">✕</button>';
+  el.innerHTML=html;
+  area.appendChild(el);
+ });
+ area.querySelectorAll("input").forEach(input=>{
+  input.onchange=()=>{
+   stack[+input.dataset.index].args[+input.dataset.arg]=input.value;
+  };
+ });
+ area.querySelectorAll("[data-remove]").forEach(button=>{
+  button.onclick=()=>{
+   stack.splice(+button.dataset.remove,1);
+   renderStack();
+  };
+ });
+}
+function clearWorkspace(){stopCode();stack=[];renderStack()}
+function addComment(){
+ const comment=prompt("Write your comment:");
+ if(comment!==null){
+  stack.push({type:"comment",label:"💬 "+comment,args:[],category:"My Blocks"});
+  renderStack();
+ }
+}
+
+function renderSprites(){
+ $("sprites").innerHTML="";
+ sprites.forEach((s,i)=>{
+  const card=document.createElement("div");
+  card.className="spriteCard"+(i===selectedSprite?" selected":"");
+  card.textContent=s.emoji;
+  card.title=s.name;
+  card.onclick=()=>selectSprite(i);
+  $("sprites").appendChild(card);
+ });
+ updateSprite();
+}
+function selectSprite(i){
+ selectedSprite=i;
+ renderSprites();
+}
+function addSprite(){
+ const choices=["🐱","🐶","🐸","🚀","🐼","🦊","🐧","🐲","👾","⭐","🏀","🚗"];
+ const choice=prompt("Choose a sprite emoji:\n"+choices.join(" "));
+ if(!choice)return;
+ sprites.push({name:"Sprite "+(sprites.length+1),emoji:choice,x:0,y:0,size:100,visible:true,costumes:[],costume:0});
+ selectSprite(sprites.length-1);
+}
+function deleteSprite(){
+ if(sprites.length<=1){alert("You need at least one sprite.");return}
+ sprites.splice(selectedSprite,1);
+ selectedSprite=0;
+ renderSprites();
+}
+function updateSprite(){
+ const s=sprites[selectedSprite];
+ if(!s)return;
+ $("sprite").textContent=s.costumes[s.costume]||s.emoji;
+ $("sprite").style.display=s.visible?"block":"none";
+ $("sprite").style.left="calc(50% + "+s.x+"px)";
+ $("sprite").style.top="calc(50% - "+s.y+"px)";
+ $("sprite").style.fontSize=(55*s.size/100)+"px";
+}
+function changeBackdrop(){
+ $("stage").style.background=$("backdrop").value;
+}
+function showTab(id,button){
+ ["costumes","sounds"].forEach(name=>$(name).classList.toggle("hidden",name!==id));
+ document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active");
+}
+
+async function runCode(){
+ stopCode();
+ running=true;
+ const token=++runToken;
+ const s=sprites[selectedSprite];
+ for(let i=0;i<stack.length;i++){
+  if(!running||token!==runToken)break;
+  const b=stack[i],a=b.args;
+  const n=(v)=>Number(v)||0;
+  switch(b.type){
+   case "move":s.x+=Math.cos((s.direction||90)*Math.PI/180)*n(a[0]);s.y+=Math.sin((s.direction||90)*Math.PI/180)*n(a[0]);break;
+   case "turn":s.direction=(s.direction||90)+n(a[0]);break;
+   case "direction":s.direction=n(a[0]);break;
+   case "goto":s.x=n(a[0]);s.y=n(a[1]);break;
+   case "glide":await sleep(Math.max(0,n(a[0])*1000));s.x=n(a[1]);s.y=n(a[2]);break;
+   case "bounce":
+    if(Math.abs(s.x)>145)s.x=-s.x;
+    if(Math.abs(s.y)>110)s.y=-s.y;
+    break;
+   case "say":case "think":
+    $("speech").textContent=String(a[0]??"");
+    $("speech").style.display="block";
+    await sleep(1500);
+    $("speech").style.display="none";
+    break;
+   case "show":s.visible=true;break;
+   case "hide":s.visible=false;break;
+   case "size":s.size=n(a[0]);break;
+   case "changeSize":s.size+=n(a[0]);break;
+   case "nextCostume":s.costume++;if(s.costume>=Math.max(1,s.costumes.length))s.costume=0;break;
+   case "nextBackdrop":backdropIndex=(backdropIndex+1)%backdrops.length;$("stage").style.background=backdrops[backdropIndex];$("backdrop").value=backdrops[backdropIndex];break;
+   case "wait":await sleep(Math.max(0,n(a[0])*1000));break;
+   case "repeat":
+    for(let j=0;j<Math.min(50,Math.max(0,n(a[0])));j++){
+     if(!running)break;
+     await sleep(100);
+    }
+    break;
+   case "forever":
+    alert("Forever blocks need blocks nested inside them. This simple editor runs the blocks in order.");
+    break;
+   case "playSound":case "playSoundWait":playSoundByName(a[0]);break;
+   case "stopSounds":if(audioContext)audioContext.suspend();break;
+   case "volume":break;
+   case "setVar":variables[a[0]]=n(a[1]);break;
+   case "changeVar":variables[a[0]]=(Number(variables[a[0]])||0)+n(a[1]);break;
+   case "showVar":alert(a[0]+": "+(variables[a[0]]??0));break;
+   case "ask":variables.answer=prompt(a[0])||"";break;
+   case "mouseX":variables.mouseX=0;break;
+   case "mouseY":variables.mouseY=0;break;
+   case "random":variables.result=Math.floor(Math.random()*(n(a[1])-n(a[0])+1))+n(a[0]);break;
+   case "add":variables.result=n(a[0])+n(a[1]);break;
+   case "subtract":variables.result=n(a[0])-n(a[1]);break;
+   case "multiply":variables.result=n(a[0])*n(a[1]);break;
+   case "divide":variables.result=n(a[1])===0?0:n(a[0])/n(a[1]);break;
+   case "join":variables.result=String(a[0])+String(a[1]);break;
+   case "less":variables.result=n(a[0])<n(a[1]);break;
+   case "equal":variables.result=String(a[0])===String(a[1]);break;
+   case "keySensing":variables.keyPressed=false;break;
+   case "touching":variables.touching=false;break;
+   case "penDown":case "penUp":case "stamp":case "erase":break;
+   case "custom":alert("Custom blocks are a work in progress.");break;
+   case "comment":break;
+  }
+  updateSprite();
+  await sleep(120);
+ }
+ running=false;
+}
+function stopCode(){running=false;runToken++;$("speech").style.display="none"}
+
+function showTabByName(id){
+ const button=[...document.querySelectorAll(".tab")].find(b=>b.textContent.toLowerCase().includes(id));
+ if(button)showTab(id,button);
+}
+
+/* COSTUME DRAWING */
+const canvas=$("costumeCanvas"),ctx=canvas.getContext("2d");
+ctx.fillStyle="white";ctx.fillRect(0,0,canvas.width,canvas.height);
+function setDrawMode(mode){drawMode=mode}
+function canvasPos(e){
+ const r=canvas.getBoundingClientRect();
+ return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height};
+}
+canvas.addEventListener("pointerdown",e=>{
+ drawing=true;canvas.setPointerCapture(e.pointerId);
+ const p=canvasPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);
+});
+canvas.addEventListener("pointermove",e=>{
+ if(!drawing)return;
+ const p=canvasPos(e);
+ ctx.lineWidth=7;ctx.lineCap="round";
+ if(drawMode==="erase")ctx.strokeStyle="white";
+ else ctx.strokeStyle=$("paintColor").value;
+ ctx.lineTo(p.x,p.y);ctx.stroke();
+});
+canvas.addEventListener("pointerup",()=>drawing=false);
+canvas.addEventListener("pointercancel",()=>drawing=false);
+function clearCostume(){ctx.fillStyle="white";ctx.fillRect(0,0,canvas.width,canvas.height)}
+function applyCostume(){
+ const s=sprites[selectedSprite];
+ s.costumes.push(canvas.toDataURL("image/png"));
+ s.costume=s.costumes.length-1;
+ $("sprite").innerHTML='<img src="'+s.costumes[s.costume]+'" style="width:80px;height:80px;object-fit:contain">';
+}
+function uploadCostume(e){
+ const file=e.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  const img=new Image();
+  img.onload=()=>{
+   clearCostume();
+   ctx.drawImage(img,0,0,canvas.width,canvas.height);
+   applyCostume();
+  };
+  img.src=reader.result;
+ };
+ reader.readAsDataURL(file);
+}
+
+/* SOUND STUDIO */
+function getAudio(){
+ if(!audioContext)audioContext=new (window.AudioContext||window.webkitAudioContext)();
+ if(audioContext.state==="suspended")audioContext.resume();
+ return audioContext;
+}
+function tone(freq,duration,type="sine"){
+ const ac=getAudio(),osc=ac.createOscillator(),gain=ac.createGain();
+ osc.type=type;osc.frequency.value=freq;
+ gain.gain.setValueAtTime(.18,ac.currentTime);
+ gain.gain.exponentialRampToValueAtTime(.001,ac.currentTime+duration);
+ osc.connect(gain);gain.connect(ac.destination);
+ osc.start();osc.stop(ac.currentTime+duration);
+}
+function makeSound(name){
+ const patterns={Pop:[[600,.1]],Beep:[[440,.25]],Boing:[[180,.3],[420,.2]],Laser:[[900,.15],[300,.3]]};
+ (patterns[name]||patterns.Pop).forEach((p,i)=>setTimeout(()=>tone(p[0],p[1],name==="Laser"?"sawtooth":"sine"),i*130));
+ if(!sounds.some(s=>s.name===name)){
+  sounds.push({name,kind:"built-in",data:""});
+  renderSounds();
+ }
+}
+function playSoundByName(name){
+ const sound=sounds.find(s=>s.name===name);
+ if(sound&&sound.data){
+  const audio=new Audio(sound.data);audio.play().catch(()=>{});
+ }else makeSound(name);
+}
+function uploadSound(e){
+ const file=e.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  sounds.push({name:file.name,kind:"upload",data:reader.result});
+  renderSounds();
+ };
+ reader.readAsDataURL(file);
+}
+async function startRecording(){
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  recordingChunks=[];
+  recorder=new MediaRecorder(stream);
+  recorder.ondataavailable=e=>{if(e.data.size)recordingChunks.push(e.data)};
+  recorder.onstop=()=>{
+   const blob=new Blob(recordingChunks,{type:recorder.mimeType||"audio/webm"});
+   const reader=new FileReader();
+   reader.onload=()=>{
+    sounds.push({name:"My Recording "+(sounds.length+1),kind:"recording",data:reader.result});
+    renderSounds();
+   };
+   reader.readAsDataURL(blob);
+   stream.getTracks().forEach(t=>t.stop());
+  };
+  recorder.start();
+  alert("Recording started. Press Stop recording when finished.");
+ }catch(err){alert("Microphone unavailable. Allow microphone access and try again.");}
+}
+function stopRecording(){
+ if(recorder&&recorder.state!=="inactive")recorder.stop();
+}
+function renderSounds(){
+ $("soundList").innerHTML="";
+ sounds.forEach((s,i)=>{
+  const row=document.createElement("div");row.className="soundItem";
+  const title=document.createElement("span");title.textContent=s.name;
+  const play=document.createElement("button");play.textContent="▶";
+  play.onclick=()=>playSoundByName(s.name);
+  const del=document.createElement("button");del.textContent="✕";
+  del.onclick=()=>{sounds.splice(i,1);renderSounds()};
+  row.append(title,play,del);$("soundList").appendChild(row);
+ });
+}
+
+/* PROJECT SAVE / LOAD */
+function projectData(){
+ return {
+  version:2,name:$("projectName").value,stack,sprites,selectedSprite,
+  sounds,variables,backdrop:$("backdrop").value
+ };
+}
+function saveProject(){
+ try{
+  localStorage.setItem("fireScratch2Project",JSON.stringify(projectData()));
+  alert("Project saved in this browser!");
+ }catch(e){alert("Could not save. The project may be too large. Try exporting it instead.");}
+}
+function loadProject(){
+ const raw=localStorage.getItem("fireScratch2Project");
+ if(!raw){alert("No saved project found.");return}
+ try{applyProject(JSON.parse(raw));alert("Project loaded!")}
+ catch(e){alert("The saved project could not be opened.")}
+}
+function exportProject(){
+ const data=JSON.stringify(projectData(),null,2);
+ const blob=new Blob([data],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download=($("projectName").value||"fire-scratch-project")+".fireproject";
+ a.click();URL.revokeObjectURL(url);
+}
+function importProject(e){
+ const file=e.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{applyProject(JSON.parse(reader.result));alert("Project imported!")}
+  catch(err){alert("That project file is not valid.")}
+ };
+ reader.readAsText(file);
+ e.target.value="";
+}
+function applyProject(data){
+ $("projectName").value=data.name||"My Project";
+ stack=Array.isArray(data.stack)?data.stack:[];
+ sprites=Array.isArray(data.sprites)&&data.sprites.length?data.sprites:[{name:"Cat",emoji:"🐱",x:0,y:0,size:100,visible:true,costumes:[],costume:0}];
+ selectedSprite=Math.min(data.selectedSprite||0,sprites.length-1);
+ sounds=Array.isArray(data.sounds)?data.sounds:[];
+ variables=data.variables||{};
+ $("backdrop").value=data.backdrop||"#ffffff";
+ changeBackdrop();renderStack();renderSprites();renderSounds();
+}
+makeCategories();
+renderStack();
+renderSprites();
+renderSounds();
+changeBackdrop();
+</script>
+</body>
+</html>
