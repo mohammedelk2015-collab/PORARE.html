@@ -1,1394 +1,558 @@
+
 <!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="ar" dir="rtl">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>FIRE_STORM Browser</title>
-
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الاجتماعيات - مساعد الجغرافيا والتاريخ</title>
 
 <style>
-
 *{box-sizing:border-box}
-
-
-
+:root{
+ --bg:#06131a;
+ --panel:#0b2029;
+ --panel2:#102a34;
+ --line:#17434c;
+ --cyan:#20e6dc;
+ --blue:#39b9d2;
+ --muted:#7898a2;
+ --white:#e6fbff;
+}
 body{
-
-    margin:0;
-
-    background:#10131c;
-
-    color:white;
-
-    font-family:Arial,sans-serif;
-
+ margin:0;
+ background:var(--bg);
+ color:var(--white);
+ font-family:Arial,sans-serif;
+ min-height:100vh;
 }
-
-
-
-header{
-
-    height:65px;
-
-    background:#191e2b;
-
-    display:flex;
-
-    align-items:center;
-
-    padding:0 18px;
-
+button{font:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:225px;
+ background:#081a22;
+ border-right:1px solid var(--line);
+ padding:22px 14px;
+ display:flex;
+ flex-direction:column;
+ flex-shrink:0;
 }
-
-
-
+.brand{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ padding:4px 8px 27px;
+ font-size:19px;
+ font-weight:bold;
+ letter-spacing:1px;
+ color:var(--cyan);
+}
 .logo{
-
-    font-size:25px;
-
-    font-weight:bold;
-
-    color:#ff5722;
-
+ width:31px;height:31px;
+ border:2px solid var(--cyan);
+ border-radius:50%;
+ display:grid;place-items:center;
+ box-shadow:0 0 13px #20e6dc55;
 }
-
-
-
-.logo span{color:white}
-
-
-
-.tabs{
-
-    display:flex;
-
-    gap:6px;
-
-    background:#111622;
-
-    padding:8px;
-
-    flex-wrap:wrap;
-
+.nav-label{
+ color:#527781;
+ font-size:10px;
+ letter-spacing:1.5px;
+ margin:16px 9px 9px;
 }
-
-
-
-.tab{
-
-    background:#292f40;
-
-    padding:10px 16px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
+.nav{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:12px 11px;
+ margin:3px 0;
+ color:#9ab5bd;
+ border-radius:7px;
+ font-size:13px;
+ cursor:pointer;
 }
-
-
-
-.tab.active{background:#ff5722}
-
-
-
-.toolbar{
-
-    display:flex;
-
-    gap:8px;
-
-    padding:12px;
-
-    background:#191e2b;
-
+.nav:hover,.nav.active{
+ background:#10333b;
+ color:var(--cyan);
 }
-
-
-
-button{
-
-    border:0;
-
-    border-radius:8px;
-
-    padding:11px 15px;
-
-    cursor:pointer;
-
-    font-weight:bold;
-
+.nav.active{border-left:2px solid var(--cyan)}
+.sidebar-bottom{
+ margin-top:auto;
+ border-top:1px solid var(--line);
+ padding-top:15px;
 }
-
-
-
-button:disabled{
-
-    opacity:.6;
-
-    cursor:not-allowed;
-
+.profile{
+ background:#102a34;
+ border:1px solid var(--line);
+ border-radius:9px;
+ padding:12px;
+ font-size:12px;
 }
-
-
-
-.toolbar button{
-
-    background:#30384b;
-
-    color:white;
-
+.profile small{color:var(--muted)}
+.main{flex:1;min-width:0;padding:22px 28px}
+.topbar{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ border-bottom:1px solid var(--line);
+ padding:0 0 17px;
 }
-
-
-
-#address{
-
-    flex:1;
-
-    min-width:100px;
-
-    border:0;
-
-    border-radius:20px;
-
-    padding:12px 18px;
-
-    background:#0e1420;
-
-    color:white;
-
-    font-size:15px;
-
+.top-title{font-size:13px;color:#9bb9c0}
+.top-right{display:flex;gap:12px;align-items:center}
+.online{
+ color:var(--cyan);
+ font-size:11px;
+ border:1px solid #17605d;
+ background:#0b292b;
+ padding:7px 11px;
+ border-radius:20px;
 }
-
-
-
-#go{
-
-    background:#ff5722;
-
-    color:white;
-
+.avatar{
+ width:31px;height:31px;border-radius:50%;
+ background:#16424a;
+ display:grid;place-items:center;color:var(--cyan);
 }
-
-
-
-main{
-
-    padding:25px;
-
-    max-width:1200px;
-
-    margin:auto;
-
+.heading{margin:27px 0 18px}
+.heading h1{font-size:25px;margin:0 0 7px}
+.heading p{color:var(--muted);font-size:13px;margin:0}
+.dashboard{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:13px;
 }
-
-
-
-h1{
-
-    font-size:35px;
-
-    color:#ff7043;
-
+.card{
+ background:linear-gradient(145deg,#102832,#0b1e27);
+ border:1px solid var(--line);
+ border-radius:11px;
+ padding:16px;
+ min-width:0;
 }
-
-
-
-.subtitle{color:#aeb7ca}
-
-
-
-.search{
-    display:flex;
-    gap:8px;
-    margin:30px auto;
-    max-width:720px;
-    padding:8px;
-    background:#191e2b;
-    border:2px solid #ff5722;
-    border-radius:30px;
-    box-shadow:0 0 22px rgba(255,87,34,.18);
+.card-label{color:#8baeb7;font-size:11px}
+.card-value{font-size:21px;margin:13px 0 5px;color:var(--cyan)}
+.card-note{font-size:10px;color:#688d98}
+.workspace{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 245px;
+ gap:15px;
+ margin-top:17px;
 }
-
-.search input{
-    background:#0e1420;
-    border:0;
-    border-radius:24px;
-    color:white;
-    padding:17px 22px;
-    font-size:17px;
+.chat-panel{
+ background:#0b2029;
+ border:1px solid var(--line);
+ border-radius:12px;
+ overflow:hidden;
+ min-width:0;
 }
-
-.search button{
-    background:#ff5722;
-    color:white;
-    border-radius:24px;
-    padding:0 25px;
+.panel-head{
+ padding:15px 17px;
+ border-bottom:1px solid var(--line);
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
 }
-
-#homepage{
-    min-height:calc(100vh - 180px);
-    padding:65px 25px;
-    text-align:center;
-    background:#10131c;
+.panel-head h2{font-size:13px;margin:0}
+.panel-head small{color:var(--cyan);font-size:10px}
+#chat{
+ height:330px;
+ overflow-y:auto;
+ padding:17px;
+ background:radial-gradient(ellipse at top,#10313a 0%,#091b23 70%);
 }
-
-#homepage h1{
-    font-size:46px;
-    color:#ff5722;
-    margin-top:45px;
+.welcome{
+ text-align:center;
+ padding:38px 15px;
+ color:#b9d6dc;
 }
-
-#homepage .subtitle{
-    color:#aab4c8;
-    font-size:17px;
+.welcome-icon{
+ width:50px;height:50px;
+ display:grid;place-items:center;
+ margin:0 auto 15px;
+ border:1px solid #23717a;
+ border-radius:15px;
+ color:var(--cyan);
+ font-size:25px;
+ box-shadow:0 0 22px #20e6dc22;
 }
-
-
-
-.search input{
-
-    flex:1;
-
-    min-width:100px;
-
-    padding:16px;
-
-    border-radius:12px;
-
-    border:1px solid #343c50;
-
-    background:#1a2030;
-
-    color:white;
-
-    font-size:16px;
-
+.welcome h3{margin:0 0 8px;font-size:17px}
+.welcome p{font-size:12px;color:#82a5ae;line-height:1.6}
+.message{
+ padding:12px 14px;
+ margin:12px 0;
+ border-radius:9px;
+ max-width:90%;
+ font-size:13px;
+ line-height:1.6;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
 }
-
-
-
-.search button{
-
-    background:#ff5722;
-
-    color:white;
-
+.user{
+ margin-left:auto;
+ background:#123d49;
+ border:1px solid #1c6470;
 }
-
-
-
-.sites{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
-
-    gap:14px;
-
+.ai{
+ margin-right:auto;
+ background:#102b34;
+ border:1px solid #1b4650;
 }
-
-
-
-.site{
-
-    background:#1b2232;
-
-    border:1px solid #30394d;
-
-    border-radius:14px;
-
-    padding:20px;
-
-    text-align:center;
-
-    cursor:pointer;
-
-    transition:.2s;
-
+.composer{
+ padding:13px;
+ border-top:1px solid var(--line);
+ background:#0b2029;
 }
-
-
-
-.site:hover{
-
-    transform:translateY(-4px);
-
-    border-color:#ff5722;
-
-    background:#292235;
-
+textarea{
+ display:block;
+ width:100%;
+ height:75px;
+ resize:vertical;
+ background:#07171e;
+ border:1px solid #1c4852;
+ color:white;
+ border-radius:8px;
+ padding:12px;
+ outline:none;
+ font:13px Arial;
 }
-
-
-
-.emoji{font-size:38px}
-
-
-
-.site h3{margin:12px 0 5px}
-
-
-
-.site small{color:#9da9be}
-
-
-
-#viewer{
-
-    display:none;
-
-    position:fixed;
-
-    top:180px;
-
-    left:0;
-
-    width:100vw;
-
-    height:calc(100vh - 180px);
-
-    border:0;
-
-    background:white;
-
+textarea:focus{border-color:var(--cyan)}
+.composer-bottom{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ margin-top:10px;
+ gap:10px;
 }
-
-
-
-.note{
-
-    margin-top:25px;
-
-    color:#8995aa;
-
-    font-size:13px;
-
+.hint{font-size:10px;color:#668b95}
+.actions{display:flex;gap:8px}
+.btn{
+ border:1px solid #21616a;
+ color:#b9dce0;
+ background:#102b34;
+ border-radius:7px;
+ padding:9px 13px;
+ font-size:11px;
 }
-
-
-
-/* FIRE HELPER */
-
-
-
-#aiPanel{
-
-    display:none;
-
-    position:fixed;
-
-    right:20px;
-
-    bottom:20px;
-
-    width:390px;
-
-    height:570px;
-
-    max-width:calc(100vw - 25px);
-
-    max-height:85vh;
-
-    background:#191e2b;
-
-    border:2px solid #ff5722;
-
-    border-radius:16px;
-
-    z-index:9999;
-
-    box-shadow:0 0 30px #000;
-
-    overflow:hidden;
-
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.send{
+ background:#13bdb5;
+ color:#04191c;
+ border:0;
+ font-weight:bold;
+ padding:10px 18px;
+ border-radius:7px;
+ font-size:12px;
+ box-shadow:0 0 13px #20e6dc33;
 }
-
-
-
-.aiHeader{
-
-    height:60px;
-
-    background:#ff5722;
-
-    padding:12px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    font-size:18px;
-
-    font-weight:bold;
-
+.send:hover{background:#51f2e9}
+.send:disabled{opacity:.5;cursor:not-allowed}
+.right-column{display:flex;flex-direction:column;gap:13px}
+.side-card{
+ background:#0c222b;
+ border:1px solid var(--line);
+ border-radius:10px;
+ padding:15px;
 }
-
-
-
-.aiHeader button{
-
-    background:#191e2b;
-
-    color:white;
-
+.side-card h3{font-size:12px;margin:0 0 14px}
+.quick{
+ padding:11px 9px;
+ border:1px solid #173b45;
+ border-radius:7px;
+ margin:8px 0;
+ font-size:11px;
+ color:#a8c8ce;
+ cursor:pointer;
 }
-
-
-
-#aiMessages{
-
-    height:calc(100% - 165px);
-
-    overflow-y:auto;
-
-    padding:14px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:12px;
-
+.quick:hover{border-color:var(--cyan);color:var(--cyan)}
+.status{font-size:11px;color:#e6c96d;margin-top:12px;overflow-wrap:anywhere}
+.feature{
+ display:flex;gap:10px;align-items:center;
+ padding:9px 0;
+ border-bottom:1px solid #17343c;
+ font-size:11px;color:#a4c0c7;
 }
-
-
-
-.aiMessage{
-
-    padding:12px;
-
-    border-radius:12px;
-
-    max-width:90%;
-
-    white-space:pre-wrap;
-
-    overflow-wrap:anywhere;
-
-    line-height:1.5;
-
+.feature:last-child{border:0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.footer{color:#557b85;font-size:10px;margin-top:20px;text-align:center}
+@media(max-width:850px){
+ .sidebar{width:175px}
+ .workspace{grid-template-columns:1fr}
+ .right-column{display:grid;grid-template-columns:1fr 1fr}
 }
-
-
-
-.aiUser{
-
-    background:#ff5722;
-
-    align-self:flex-end;
-
-}
-
-
-
-.aiBot{
-
-    background:#30384b;
-
-    align-self:flex-start;
-
-}
-
-
-
-.aiInputArea{
-
-    display:flex;
-
-    gap:7px;
-
-    padding:10px;
-
-}
-
-
-
-#aiInput{
-
-    flex:1;
-
-    min-width:0;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    border:1px solid #444;
-
-    background:#0e1420;
-
-    color:white;
-
-    font-size:14px;
-
-}
-
-
-
-#aiSend{
-
-    background:#ff5722;
-
-    color:white;
-
-}
-
-
-
-.aiTools{
-
-    display:flex;
-
-    justify-content:space-around;
-
-    padding:5px;
-
-}
-
-
-
-.aiTools button{
-
-    background:#30384b;
-
-    color:white;
-
-    font-size:12px;
-
-}
-
-
-
-.aiStatus{
-
-    font-size:11px;
-
-    color:#aeb7ca;
-
-    text-align:center;
-
-    padding:2px;
-
-}
-
-
-
 @media(max-width:600px){
-
-    .toolbar{flex-wrap:wrap}
-
-    #address{order:1;flex-basis:100%}
-
-    #go{order:2}
-
-
-
-    #aiPanel{
-
-        right:8px;
-
-        bottom:8px;
-
-        width:calc(100vw - 16px);
-
-    }
-
+ .sidebar{width:58px;padding:15px 7px}
+ .brand{padding:5px 4px 25px}
+ .brand-name,.nav span,.nav-label,.profile{display:none}
+ .nav{justify-content:center;padding:13px 5px}
+ .main{padding:15px 12px}
+ .dashboard{grid-template-columns:1fr}
+ .right-column{display:flex}
+ .top-title{font-size:11px}
+ #chat{height:350px}
 }
-
-
-/* FIRE_STORM MULTI-TAB STYLES */
-.tabToggle,.newTabButton{background:#ff5722;color:white;padding:10px 14px;cursor:pointer;font-weight:bold}
-#tabSidebar{display:none;position:fixed;z-index:20;left:0;top:180px;bottom:0;width:190px;padding:12px;overflow-y:auto;background:#111622;border-right:1px solid #30384a}
-body.tabs-open #tabSidebar{display:block}
-#tabSidebar .newTabButton{width:100%;margin-bottom:12px}
-.tabEntry{display:flex;align-items:center;gap:5px;margin-bottom:8px;padding:7px;border-radius:8px;background:#292f40}
-.tabEntry.active{background:#ff5722}
-.tabSelect{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:white;background:transparent;text-align:left;cursor:pointer}
-.tabClose{color:white;background:#42495a;padding:5px 8px;cursor:pointer}
-
 </style>
-
 </head>
 
-
-
 <body>
+<div class="app">
 
+<aside class="sidebar">
+ <div class="brand">
+  <div class="logo">S</div>
+  <span class="brand-name">الاجتماعيات</span>
+ </div>
 
+ <div class="nav-label">مساحة التعلم</div>
+ <div class="nav active">◈ <span>الرئيسية</span></div>
+ <div class="nav" onclick="focusChat()">✧ <span>AI Assistant</span></div>
+ <div class="nav" onclick="clearChat()">▤ <span>محادثة جديدة</span></div>
 
-<header>
+ <div class="nav-label">الأدوات</div>
+ <div class="nav" onclick="focusChat()">▧ <span>مولد الشروحات</span></div>
+ <div class="nav" onclick="focusChat()">⌕ <span>أدوات البحث</span></div>
+ <div class="nav" onclick="focusChat()">◉ <span>مواضيعي</span></div>
 
-    <div class="logo">🔥 FIRE_STORM <span>Browser</span></div>
+ <div class="nav-label">التفضيلات</div>
+ <div class="nav">⚙ <span>الإعدادات</span></div>
 
-    <div style="margin-left:auto;color:#9ba8bc">HTML EDITION</div>
+ <div class="sidebar-bottom">
+  <div class="profile">
+   <div style="color:var(--cyan);margin-bottom:5px">● الاجتماعيات User</div>
+   <small>AI Workspace</small>
+  </div>
+ </div>
+</aside>
 
-</header>
+<main class="main">
+ <div class="topbar">
+  <div class="top-title">الاجتماعيات / لوحة التعلم</div>
+  <div class="top-right">
+   <div class="online">● مساعد الاجتماعيات</div>
+   <div class="avatar">S</div>
+  </div>
+ </div>
 
+ <div class="heading">
+  <h1>we love teache of _الا جتماعيات</h1>
+  <p>مساعدك الذكي للجغرافيا والتاريخ والحضارة الإسلامية.</p>
+ </div>
 
+ <section class="dashboard">
+  <div class="card">
+   <div class="card-label">مساعد الاجتماعيات</div>
+   <div class="card-value">✧ جاهز</div>
+   <div class="card-note">Ask questions and get answers</div>
+  </div>
+  <div class="card">
+   <div class="card-label">مساحة التعلم</div>
+   <div class="card-value">نشط</div>
+   <div class="card-note">مساعدك الذكي للاجتماعيات</div>
+  </div>
+  <div class="card">
+   <div class="card-label">الاتصال</div>
+   <div class="card-value" id="connectionCard">في الانتظار</div>
+   <div class="card-note">خدمة المساعد الذكي</div>
+  </div>
+ </section>
 
-<div class="tabs">
-    <button class="tabToggle" onclick="toggleTabsSidebar()">☰ Tabs</button>
-    <div class="tab" onclick="openAI()">🔥 Fire Helper</div>
-</div>
+ <section class="workspace">
+  <div class="chat-panel" id="assistant">
+   <div class="panel-head">
+    <h2>✧ محادثة الاجتماعيات</h2>
+    <small>الاجتماعيات ASSISTANT</small>
+   </div>
 
-<div id="tabSidebar">
-    <button class="newTabButton" onclick="newTab()">＋ New Tab</button>
-    <div id="tabList"></div>
-</div>
-
-
-
-<div class="toolbar">
-
-    <button onclick="back()">←</button>
-
-    <button onclick="forward()">→</button>
-
-    <button onclick="reload()">⟳</button>
-
-    <button onclick="home()">⌂</button>
-
-
-
-    <input id="address"
-
-        placeholder="Search or enter a website address"
-
-        onkeydown="if(event.key==='Enter')navigate()">
-
-
-
-    <button id="go" onclick="navigate()">GO</button>
-
-</div>
-
-
-
-<main id="homepage">
-
-
-
-    <h1>🔥 Welcome to FIRE_STORM!</h1>
-
-
-
-    <div class="subtitle">
-
-        Your browser. Your websites. Your world.
-
+   <div id="chat">
+    <div class="welcome" id="welcome">
+     <div class="welcome-icon">✧</div>
+     <h3>نحن نحبك يا أستاذ الاجتماعيات ❤️</h3>
+     <p>مرحباً! أنا مساعدك في مادة الاجتماعيات.<br>
+     نحن نحبك يا أستاذ الاجتماعيات ❤️ اكتب سؤالك لنبدأ.</p>
     </div>
+   </div>
 
-
-
-    <div class="search">
-
-        <input id="search"
-
-            placeholder="What do you want to search?"
-
-            onkeydown="if(event.key==='Enter')searchWeb()">
-
-
-
-        <button onclick="searchWeb()">SEARCH</button>
-
+   <div class="composer">
+    <textarea id="question" placeholder="Ask الاجتماعيات anything..."></textarea>
+    <div class="composer-bottom">
+     <div class="hint">ENTER للإرسال · SHIFT + ENTER لسطر جديد</div>
+     <div class="actions">
+      <button class="btn" onclick="clearChat()">مسح المحادثة</button>
+      <button class="send" id="sendButton" onclick="sendMessage()">إرسال ↗</button>
+     </div>
     </div>
+   </div>
+  </div>
 
+  <aside class="right-column">
+   <div class="side-card">
+    <h3>✧ أسئلة سريعة</h3>
+    <div class="quick" onclick="usePrompt('اشرح لي ما هي الجغرافيا وفروعها بطريقة بسيطة.')">تعلم الجغرافيا</div>
+    <div class="quick" onclick="usePrompt('ما هي عاصمة المغرب؟')">جغرافيا المغرب</div>
+    <div class="quick" onclick="usePrompt('اشرح لي تضاريس المغرب ومناخه.')">التاريخ الإسلامي</div>
+    <div class="quick" onclick="usePrompt('حدثني عن الحضارة الإسلامية وإسهاماتها.')">مراجعة الاجتماعيات</div>
+   </div>
 
+   <div class="side-card">
+    <h3>◈ مساحة التعلم STATUS</h3>
+    <div class="feature"><span class="dot"></span> واجهة المحادثة جاهزة</div>
+    <div class="feature"><span class="dot"></span> سجل المحادثة نشط</div>
+    <div class="feature"><span class="dot"></span> الاتصال بالمساعد متاح</div>
+    <div class="status" id="status">في انتظار مفتاح API...</div>
+   </div>
 
-    <h2>⭐ Your websites</h2>
-
-
-
-    <div class="sites">
-
-
-
-        <div class="site" onclick="visit('https*:*//mohammedelk2015-collab.github.io/game.html/')">
-
-            <div class="emoji">🎲</div>
-
-            <h3>My Games</h3>
-
-            <small>Game website</small>
-
-        </div>
-
-
-
-        <div class="site" onclick="visit('https*:*//mohammedelk2015-collab.github.io/game.html/M.html')">
-
-            <div class="emoji">⛏️</div>
-
-            <h3>M Game</h3>
-
-            <small>My game</small>
-
-        </div>
-
-
-
-        <div class="site" onclick="visit('https*:*//sandbox.minefun.io/docs?search=chat')">
-
-            <div class="emoji">📖</div>
-
-            <h3>Minefun Docs</h3>
-
-            <small>Developer documentation</small>
-
-        </div>
-
-
-
-        <div class="site" onclick="visit('https*:*//minefun.io/')">
-
-            <div class="emoji">🧱</div>
-
-            <h3>Minefun.io</h3>
-
-            <small>Block games</small>
-
-        </div>
-
-
-
+   <div class="side-card">
+    <h3>ABOUT الاجتماعيات</h3>
+    <div style="font-size:11px;color:#85a8b1;line-height:1.7">
+     مساعدك للتعلم في الجغرافيا والتاريخ والحضارة الإسلامية.
     </div>
+   </div>
+  </aside>
+ </section>
 
-
-
-    <div class="note">
-
-        FIRE_STORM HTML Browser • Some websites may block iframe embedding.
-
-    </div>
-
-
-
+ <div class="footer">الاجتماعيات · YOUR INTELLIGENT مساحة التعلم</div>
 </main>
-
-
-
-<webview
-    id="viewer"
-    title="Website viewer"
-    allowpopups
-    partition="persist:firestorm"
-    style="display:none;position:fixed;top:180px;left:0;width:100vw;height:calc(100vh - 180px);border:0;">
-</webview>
-
-
-
-<!-- FIRE HELPER PANEL -->
-
-
-
-<div id="aiPanel">
-
-
-
-    <div class="aiHeader">
-
-        <span>🔥 FIRE HELPER</span>
-
-        <button onclick="closeAI()">✕</button>
-
-    </div>
-
-
-
-    <div id="aiMessages">
-
-        <div class="aiMessage aiBot">
-
-🔥 Hello! I'm FIRE HELPER!
-
-
-
-I'm your AI assistant.
-
-
-
-I can help you with:
-
-• HTML
-
-• CSS
-
-• JavaScript
-
-• Games
-
-• Websites
-
-• Learning
-
-• Questions
-
-
-
-What would you like to ask?
-
-        </div>
-
-    </div>
-
-
-
-    <div class="aiStatus" id="aiStatus">
-
-        🔥 FIRE HELPER • Ready
-
-    </div>
-
-
-
-    <div class="aiInputArea">
-
-        <input id="aiInput"
-
-            placeholder="Ask FIRE HELPER anything..."
-
-            onkeydown="if(event.key==='Enter')sendAI()">
-
-
-
-        <button id="aiSend" onclick="sendAI()">➤</button>
-
-    </div>
-
-
-
-    <div class="aiTools">
-
-        <button onclick="clearAI()">🗑️ Clear</button>
-
-        <button onclick="copyAI()">📋 Copy answer</button>
-
-    </div>
-
-
-
 </div>
-
-
 
 <script>
+/* ==================================================
+   🔥 YOUR API KEY GOES HERE
 
+   Replace the text inside the quotation marks
+   with your own OpenRouter API key.
 
+   WARNING: Never publish a real key in public HTML.
+   Anyone can view the source and copy it.
+================================================== */
 
+const API_KEY = "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"; // ضع مفتاح OpenRouter الخاص بك هنا بين علامتي الاقتباس
 
-/* BROWSER — FIRE_STORM MULTI-TAB SYSTEM */
+/* AI SETTINGS */
+const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const MODEL = "openrouter/free";
 
-const address=document.getElementById('address');
-const homepage=document.getElementById('homepage');
-const tabList=document.getElementById('tabList');
+/* APP SETTINGS */
+const chat = document.getElementById("chat");
+const questionBox = document.getElementById("question");
+const sendButton = document.getElementById("sendButton");
+const statusText = document.getElementById("status");
+const connectionCard = document.getElementById("connectionCard");
 
-let browserTabs=[];
-let activeTabId=null;
-let tabCounter=0;
-let sidebarVisible=false;
-let currentURL='';
+let conversation = [];
 
-function activeTab(){
-    return browserTabs.find(t=>t.id===activeTabId)||null;
+function setStatus(message,color="#e6c96d"){
+ statusText.textContent=message;
+ statusText.style.color=color;
 }
 
-function renderTabs(){
-    tabList.innerHTML='';
-    browserTabs.forEach(tab=>{
-        const row=document.createElement('div');
-        row.className='tabEntry'+(tab.id===activeTabId?' active':'');
-        const select=document.createElement('button');
-        select.className='tabSelect';
-        select.textContent=tab.title||'New Tab';
-        select.title=tab.url||'New Tab';
-        select.onclick=()=>selectBrowserTab(tab.id);
-        const close=document.createElement('button');
-        close.className='tabClose';
-        close.textContent='×';
-        close.title='Close tab';
-        close.onclick=()=>closeBrowserTab(tab.id);
-        row.append(select,close);
-        tabList.appendChild(row);
-    });
+function addMessage(text,type){
+ const welcome=document.getElementById("welcome");
+ if(welcome) welcome.remove();
+
+ const item=document.createElement("div");
+ item.className="message "+type;
+ item.textContent=text;
+ chat.appendChild(item);
+ chat.scrollTop=chat.scrollHeight;
 }
 
-function createBrowserTab(){
-    const id='fire-tab-'+(++tabCounter);
-    browserTabs.push({id,title:'New Tab',url:'',history:[],historyIndex:-1});
-    window.fireStormView.createTab(id);
-    selectBrowserTab(id);
+function focusChat(){
+ questionBox.focus();
+ document.getElementById("assistant").scrollIntoView({behavior:"smooth"});
 }
 
-function selectBrowserTab(id){
-    const tab=browserTabs.find(t=>t.id===id);
-    if(!tab)return;
-    activeTabId=id;
-    currentURL=tab.url;
-    address.value=tab.url;
-    window.fireStormView.selectTab(id);
-    if(document.getElementById('aiPanel').style.display==='block'){
-        window.fireStormView.hide(id);
-    }else if(tab.url){
-        homepage.style.display='none';
-        window.fireStormView.show(id);
-    }else{
-        window.fireStormView.hide(id);
-        homepage.style.display='block';
-    }
-    renderTabs();
+function usePrompt(text){
+ questionBox.value=text;
+ focusChat();
 }
 
-function visit(url){load(url,true)}
-
-function getSearchURL(value){
-    let text=value.trim();
-    let lower=text.toLowerCase();
-    if(!text)return 'https://www.google.com/';
-    if(/chatgpt/.test(lower))return 'https://mohammedelk2015-collab.github.io/game.html/chatgpt.html';
-    if(/crazy\s*games?/.test(lower))return 'https://www.crazygames.com/';
-    if(/\bmaps?\b/.test(lower))return 'https://mohammedelk2015-collab.github.io/game.html/map.html';
-    if(/^https?:\/\//i.test(text))return text;
-    if(/^[\w-]+(\.[\w-]+)+(:\d+)?(\/.*)?$/.test(text))return 'https://'+text;
-    return 'https://www.google.com/search?q='+encodeURIComponent(text);
+function clearChat(){
+ conversation=[];
+ chat.innerHTML=`
+ <div class="welcome" id="welcome">
+  <div class="welcome-icon">✧</div>
+  <h3>نحن نحبك يا أستاذ الاجتماعيات ❤️</h3>
+  <p>مرحباً! أنا مساعدك في مادة الاجتماعيات.<br>
+  نحن نحبك يا أستاذ الاجتماعيات ❤️ اكتب سؤالك لنبدأ.</p>
+ </div>`;
+ setStatus("بدأت محادثة جديدة.","#20e6dc");
 }
 
-function navigate(){
-    const value=address.value.trim();
-    if(value)visit(getSearchURL(value));
+async function sendMessage(){
+ const question=questionBox.value.trim();
+
+ if(!question){
+  setStatus("اكتب سؤالك أولاً.");
+  return;
+ }
+
+ if(!API_KEY || API_KEY==="PASTE_YOUR_OPENROUTER_API_KEY_HERE"){
+  setStatus("أضف مفتاح API في المكان المحدد داخل ملف HTML.","#ff7777");
+  return;
+ }
+
+ addMessage(question,"user");
+ questionBox.value="";
+
+ conversation.push({role:"user",content:question});
+ sendButton.disabled=true;
+ sendButton.textContent="يفكر...";
+ setStatus("الاجتماعيات يفكر الآن...","#20e6dc");
+
+ try{
+  const response=await fetch(API_URL,{
+   method:"POST",
+   headers:{
+    "Authorization":"Bearer "+API_KEY,
+    "Content-Type":"application/json",
+    "HTTP-Referer":location.href,
+   "X-OpenRouter-Title":"Social Studies AI"
+   },
+   body:JSON.stringify({
+    model:MODEL,
+    messages:[
+     {
+      role:"system",
+      content:"You are الاجتماعيات AI, a helpful assistant. Give clear, friendly, useful answers."
+     },
+     ...conversation
+    ]
+   })
+  });
+
+  const data=await response.json().catch(()=>({}));
+
+  if(!response.ok){
+   throw new Error(data.error?.message || "HTTP "+response.status);
+  }
+
+  const answer=data.choices?.[0]?.message?.content;
+  if(!answer) throw new Error("The AI returned an empty response.");
+
+  conversation.push({role:"assistant",content:answer});
+  addMessage(answer,"ai");
+  setStatus("● المساعد متصل وجاهز","#20e6dc");
+  connectionCard.textContent="متصل";
+
+ }catch(error){
+  addMessage("عذراً، لم أتمكن من الحصول على إجابة.\n"+error.message,"ai");
+  setStatus("فشل الاتصال: "+error.message,"#ff7777");
+  connectionCard.textContent="غير متصل";
+ }finally{
+  sendButton.disabled=false;
+  sendButton.textContent="إرسال ↗";
+  questionBox.focus();
+ }
 }
 
-function load(url,addHistory){
-    const tab=activeTab();
-    if(!tab)return;
-    if(document.getElementById('aiPanel').style.display==='block')closeAI();
-    homepage.style.display='none';
-    currentURL=url;
-    tab.url=url;
-    address.value=url;
-    if(addHistory){
-        tab.history=tab.history.slice(0,tab.historyIndex+1);
-        tab.history.push(url);
-        tab.historyIndex=tab.history.length-1;
-    }
-    window.fireStormView.navigate(tab.id,url);
-    renderTabs();
-}
-
-function searchWeb(){
-    const q=document.getElementById('search').value.trim();
-    if(q)visit(getSearchURL(q));
-}
-
-function home(){
-    const tab=activeTab();
-    if(tab){
-        tab.url='';
-        currentURL='';
-        window.fireStormView.hide(tab.id);
-    }
-    homepage.style.display='block';
-    address.value='';
-    renderTabs();
-}
-
-function back(){
-    const tab=activeTab();
-    if(tab&&tab.historyIndex>0){
-        tab.historyIndex--;
-        load(tab.history[tab.historyIndex],false);
-    }
-}
-
-function forward(){
-    const tab=activeTab();
-    if(tab&&tab.historyIndex<tab.history.length-1){
-        tab.historyIndex++;
-        load(tab.history[tab.historyIndex],false);
-    }
-}
-
-function reload(){
-    const tab=activeTab();
-    if(tab&&tab.url)window.fireStormView.navigate(tab.id,tab.url);
-}
-
-function newTab(){
-    if(document.getElementById('aiPanel').style.display==='block')closeAI();
-    createBrowserTab();
-}
-
-function closeBrowserTab(id){
-    const index=browserTabs.findIndex(t=>t.id===id);
-    if(index<0)return;
-    const wasActive=activeTabId===id;
-    window.fireStormView.closeTab(id);
-    browserTabs.splice(index,1);
-    if(browserTabs.length===0){
-        activeTabId=null;
-        createBrowserTab();
-    }else if(wasActive){
-        selectBrowserTab(browserTabs[Math.min(index,browserTabs.length-1)].id);
-    }else{
-        renderTabs();
-    }
-}
-
-function toggleTabsSidebar(){
-    sidebarVisible=!sidebarVisible;
-    document.body.classList.toggle('tabs-open',sidebarVisible);
-    window.fireStormView.setSidebar(sidebarVisible);
-}
-
-window.fireStormView.onTabTitle((id,title)=>{
-    const tab=browserTabs.find(t=>t.id===id);
-    if(tab&&title){tab.title=title;renderTabs();}
+questionBox.addEventListener("keydown",event=>{
+ if(event.key==="Enter" && !event.shiftKey){
+  event.preventDefault();
+  sendMessage();
+ }
 });
 
-createBrowserTab();
-
-
-/* FIRE HELPER uses the backend deployed on the same domain. Keep API keys on the server. */
-const AI_API_URL="http://127.0.0.1:3001/api/chat";
-
-
-
-let lastAIAnswer="";
-
-let aiHistory=[];
-
-let isAISending=false;
-
-
-
-function openAI(){
-    const tab=activeTab();
-    if(tab)window.fireStormView.hide(tab.id);
-    document.getElementById('aiPanel').style.display='block';
-    document.getElementById('aiInput').focus();
+if(API_KEY==="PASTE_YOUR_OPENROUTER_API_KEY_HERE"){
+ setStatus("أضف مفتاح API في مصدر HTML.");
+}else{
+ setStatus("API key found. جاهز to connect.","#20e6dc");
 }
-
-
-
-function closeAI(){
-    document.getElementById('aiPanel').style.display='none';
-    const tab=activeTab();
-    if(tab&&tab.url){
-        homepage.style.display='none';
-        window.fireStormView.show(tab.id);
-    }else{
-        homepage.style.display='block';
-    }
-}
-
-
-
-function addAIMessage(text,isUser){
-
-
-
-    const messages=document.getElementById('aiMessages');
-
-
-
-    const bubble=document.createElement('div');
-
-
-
-    bubble.className='aiMessage '+(isUser?'aiUser':'aiBot');
-
-
-
-    bubble.textContent=text;
-
-
-
-    messages.appendChild(bubble);
-
-
-
-    messages.scrollTop=messages.scrollHeight;
-
-}
-
-
-
-async function sendAI(){
-
-
-
-    if(isAISending)return;
-
-
-
-    const input=document.getElementById('aiInput');
-
-    const status=document.getElementById('aiStatus');
-
-    const button=document.getElementById('aiSend');
-
-
-
-    const question=input.value.trim();
-
-
-
-    if(!question)return;
-
-
-
-
-    input.value="";
-
-
-
-    addAIMessage(question,true);
-
-
-
-    aiHistory.push({
-
-        role:"user",
-
-        content:question
-
-    });
-
-
-
-    aiHistory=aiHistory.slice(-16);
-
-
-
-    isAISending=true;
-
-    button.disabled=true;
-
-    button.textContent="...";
-
-
-
-    status.textContent="🔥 FIRE HELPER is thinking...";
-
-
-
-    try{
-
-
-
-        const response=await fetch(AI_API_URL,{
-
-
-
-            method:"POST",
-
-
-
-            headers:{
-
-                "Content-Type":"application/json"
-
-            },
-
-
-
-            body:JSON.stringify({
-
-                messages:aiHistory
-
-            })
-
-
-
-        });
-
-
-
-        const data=await response.json();
-
-
-
-        if(!response.ok){
-
-            throw new Error(data.error||"AI connection failed.");
-
-        }
-
-
-
-        if(!data.reply){
-
-            throw new Error("The AI returned an empty answer.");
-
-        }
-
-
-
-        lastAIAnswer=data.reply;
-
-
-
-        aiHistory.push({
-
-            role:"assistant",
-
-            content:data.reply
-
-        });
-
-
-
-        aiHistory=aiHistory.slice(-16);
-
-
-
-        addAIMessage(data.reply,false);
-
-
-
-        status.textContent="🔥 FIRE HELPER • Connected";
-
-
-
-    }catch(error){
-
-
-
-        addAIMessage(
-
-            "⚠️ FIRE HELPER couldn't connect: "+error.message,
-
-            false
-
-        );
-
-
-
-        status.textContent="⚠️ Connection problem";
-
-
-
-    }finally{
-
-
-
-        isAISending=false;
-
-        button.disabled=false;
-
-        button.textContent="➤";
-
-        input.focus();
-
-    }
-
-}
-
-
-
-function clearAI(){
-
-
-
-    document.getElementById('aiMessages').innerHTML='';
-
-
-
-    aiHistory=[];
-
-
-
-    lastAIAnswer='';
-
-
-
-    addAIMessage(
-
-        "🔥 Chat cleared! What would you like to ask?",
-
-        false
-
-    );
-
-
-
-    document.getElementById('aiStatus').textContent=
-
-        "🔥 FIRE HELPER • Ready";
-
-}
-
-
-
-function copyAI(){
-
-
-
-    if(!lastAIAnswer)return;
-
-
-
-    if(navigator.clipboard && navigator.clipboard.writeText){
-
-
-
-        navigator.clipboard.writeText(lastAIAnswer)
-
-
-
-        .then(()=>{
-
-
-
-            document.getElementById('aiStatus').textContent=
-
-                "✅ Answer copied!";
-
-        })
-
-
-
-        .catch(()=>{
-
-
-
-            document.getElementById('aiStatus').textContent=
-
-                "Copy unavailable";
-
-        });
-
-
-
-    }else{
-
-
-
-        document.getElementById('aiStatus').textContent=
-
-            "Clipboard unavailable";
-
-    }
-
-}
-
-
-
 </script>
-
-
-
 </body>
-
 </html>
